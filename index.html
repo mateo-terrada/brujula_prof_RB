@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -116,6 +116,7 @@ td.c{text-align:center}
 .wk{width:26px;height:26px;border-radius:7px;border:3px solid transparent}
 .dp{position:relative;height:28px;border-bottom:1px solid var(--line)}
 .dp .tk{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--bg)}
+.ix{margin-bottom:18px}.ixh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.ixv{font-size:26px;font-weight:800;white-space:nowrap}.ix .meter{height:12px;border-radius:6px;margin:4px 0 6px}
 .dpgrid{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);gap:4px 14px;align-items:center;font-size:14px}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mut);margin:6px 0 12px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -152,6 +153,7 @@ dialog::backdrop{background:rgba(10,12,16,.45)}
     <span class="mut small">Estoy en</span>
     <select id="curTeam" aria-label="Equipo actual"></select>
     <select id="curSub" aria-label="Subequipo actual"></select>
+    <span class="mut small" id="curNote"></span>
   </div>
   <div id="status" class="banner" hidden></div>
 </header>
@@ -319,7 +321,14 @@ const crit=()=>Array.isArray(S.cfg.crit)&&S.cfg.crit.length?S.cfg.crit:DEF_CRIT;
 const slug=t=>t.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,30)||uid();
 
 /* ---------- datos ---------- */
-const S={entries:new Map(),cfg:{team:'cl',sub:'tm'}};
+const S={entries:new Map(),cfg:{team:'vcf',sub:'orig'}};
+const DEF_SCHED={vcf:'2026-04-01',cl:'2026-09-01',pf:'2027-02-01',ll:'2027-06-01'};
+const sched=()=>({...DEF_SCHED,...(S.cfg.sched||{})});
+const autoTeam=d=>{const sc=sched();let r=TEAMS[0].id,best='';TEAMS.forEach(t=>{const st=sc[t.id];if(st&&st<=(d||today())&&st>=best){best=st;r=t.id}});return r};
+const subFor=t=>{const v=(S.cfg.subs||{})[t];return team(t).subs.some(x=>x[0]===v)?v:team(t).subs[0][0]};
+const isManual=()=>!!(S.cfg.ovr&&S.cfg.ovr.at===autoTeam());
+function applyAuto(){if(isManual())return;const a=autoTeam();if(S.cfg.team!==a||!team(a).subs.some(x=>x[0]===S.cfg.sub)){S.cfg.team=a;S.cfg.sub=subFor(a)}}
+const whereFor=d=>(!d||d===today()||isManual())?{team:S.cfg.team,sub:S.cfg.sub}:{team:autoTeam(d),sub:subFor(autoTeam(d))};
 const LK='brujula.v1',BK='brujula.copia';
 const loadLocal=()=>{try{const o=JSON.parse(localStorage.getItem(LK)||'{}');S.entries=new Map(Object.entries(o.e||{}));if(o.cfg)S.cfg=o.cfg;return true}catch(e){return false}};
 const saveLocal=()=>{try{localStorage.setItem(LK,JSON.stringify({e:Object.fromEntries(S.entries),cfg:S.cfg}));return true}catch(e){return false}};
@@ -335,7 +344,7 @@ async function del(id){
   const prev=S.entries.get(id);if(!prev)return;S.entries.delete(id);saveLocal();render();
   toast('Borrado.',()=>put(id,prev));
 }
-async function setCfg(c){S.cfg={...S.cfg,...c};saveLocal();render()}
+async function setCfg(c,quiet){S.cfg={...S.cfg,...c};saveLocal();if(!quiet)render()}
 function remind(){const b=$('#status');const first=Math.min(...[...S.entries.values()].map(e=>e.ts||Infinity));const base=lastBk()||first;const due=S.entries.size>0&&isFinite(base)&&Date.now()-base>30*864e5;
   b.hidden=!due;if(due)b.innerHTML=(lastBk()?'Pasó más de un mes desde tu última copia de seguridad.':'Todavía no hiciste ninguna copia de seguridad.')+' Tus registros viven solo en este navegador. <button class="link" id="goBk" style="color:inherit">Hacer una copia ahora</button>'}
 function boot(){
@@ -358,8 +367,9 @@ window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(VIEW
 /* ---------- equipo actual ---------- */
 $('#curTeam').innerHTML=TEAMS.map(t=>`<option value="${t.id}">${t.name} · ${t.full}</option>`).join('');
 const fillSub=(sel,t,v)=>{sel.innerHTML=team(t).subs.map(([id,n])=>`<option value="${id}">${esc(n)}</option>`).join('');sel.value=v&&team(t).subs.some(s=>s[0]===v)?v:team(t).subs[0][0]};
-$('#curTeam').onchange=e=>{const t=e.target.value;setCfg({team:t,sub:team(t).subs[0][0]})};
-$('#curSub').onchange=e=>setCfg({team:S.cfg.team,sub:e.target.value});
+$('#curTeam').onchange=e=>{const t=e.target.value,a=autoTeam();setCfg({team:t,sub:subFor(t),ovr:t===a?null:{at:a}})};
+$('#curSub').onchange=e=>setCfg({sub:e.target.value,subs:{...(S.cfg.subs||{}),[S.cfg.team]:e.target.value}});
+$('#curNote').onclick=e=>{if(e.target.id==='curAuto')setCfg({ovr:null})};
 const curIdx=()=>TEAMS.findIndex(t=>t.id===S.cfg.team);
 const stLabel=i=>i<curIdx()?'Pasada':i===curIdx()?'Ahora':i===curIdx()+1?'Próxima':'Después';
 
@@ -375,19 +385,19 @@ function paintM(){
   document.querySelectorAll('[data-want]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.want===M.want));
   document.querySelectorAll('#mTask .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===M.task));
   document.querySelectorAll('#mSig .chip').forEach(b=>b.setAttribute('aria-pressed',M.sig.has(b.dataset.id)));
-  const t=M.team||S.cfg.team,s=M.sub||S.cfg.sub;
+  const wf=whereFor($('#mDate').value),t=M.team||wf.team,s=M.sub||wf.sub;
   $('#mWhere').innerHTML=`<span class="dot" style="background:${team(t).col}"></span>${team(t).name} · ${esc(subName(t,s))}`;
   $('#mCancel').hidden=!M.id;$('#mSave').textContent=M.id?'Guardar cambios':'Guardar momento';
   $('#fmTitle').textContent=M.id?'Editando un momento':'¿Qué momento de hoy querés anotar?';
 }
 function resetM(){Object.assign(M,{id:null,want:null,task:null,team:null,sub:null});M.sig=new Set();$('#mWhat').value='';$('#mDate').value=today();$('#mErr').textContent='';paintM()}
-$('#mCancel').onclick=resetM;
+$('#mCancel').onclick=resetM;$('#mDate').onchange=paintM;
 $('#fm').onsubmit=async e=>{
   e.preventDefault();const what=$('#mWhat').value.trim();
   if(!M.want){$('#mErr').textContent='Elegí «más» o «menos»: es la única respuesta obligatoria.';return}
   if(!what){$('#mErr').textContent='Escribí la escena en una línea, aunque sea corta.';return}
-  const prev=M.id?S.entries.get(M.id):null;
-  const obj={kind:'m',date:$('#mDate').value||today(),ts:prev?.ts||Date.now(),team:M.team||S.cfg.team,sub:M.sub||S.cfg.sub,want:M.want,task:M.task,what,sig:[...M.sig],blind:prev?.blind||null,blindTs:prev?.blindTs||null};
+  const prev=M.id?S.entries.get(M.id):null;const wf=whereFor($('#mDate').value);
+  const obj={kind:'m',date:$('#mDate').value||today(),ts:prev?.ts||Date.now(),team:M.team||wf.team,sub:M.sub||wf.sub,want:M.want,task:M.task,what,sig:[...M.sig],blind:prev?.blind||null,blindTs:prev?.blindTs||null};
   const editing=!!M.id;const ok=await put(M.id||uid(),obj);
   if(ok){const w=M.want;resetM();toast(editing?'Cambios guardados.':w==='more'?'Guardado. ¿Y el momento que te sacó ganas?':'Guardado.')}
 };
@@ -463,6 +473,9 @@ function renderMapa(){
   const lateBy=TEAMS.map(t=>{const L=ws.filter(w=>w.team===t.id&&w.late!=null);return L.length?`${t.name}: ${(L.reduce((a,w)=>a+ +w.late,0)/L.length).toFixed(1)} noches tarde por semana`:null}).filter(Boolean).join(' · ');
   // evaluaciones
   const lastRv=TEAMS.map(t=>rv.filter(r=>r.team===t.id).sort((a,b)=>b.ts-a.ts)[0]).filter(Boolean);
+  const tn=all('tn'),wd=S.cfg.wDates||[];
+  const ix=lastRv.map(r=>({r,t:team(r.team),w:idxOf(r,true),u:idxOf(r,false),f:nnFail(r)})).filter(x=>x.w).sort((a,b)=>b.w.v-a.w.v);
+  const ixHtml=ix.length?`<p class="mut small">De 0 a 100: tus notas de la última evaluación de cada equipo, ponderadas por tus pesos. ${wd.length?`Pesos fijados el ${fmtD(wd[0])}${wd.length>1?`; los cambiaste en ${wd.length-1} día${wd.length>2?'s':''} más`:''}.`:'Todavía no fijaste pesos: todos los criterios valen lo mismo. Fijalos en Rotaciones → Mis criterios.'}</p>${ix.map(x=>{const L=tn.filter(n=>n.team===x.t.id),ac=L.filter(n=>n.lean==='acerca').length,al=L.filter(n=>n.lean==='aleja').length;return`<div class="ix"><div class="ixh"><span><span class="dot" style="background:${x.t.col}"></span> <b>${x.t.full}</b>${x.r.retro?' <span class="mut">(retro)</span>':''}</span><span class="ixv">${x.w.v}</span></div><div class="meter"><span style="width:${x.w.v}%;background:${x.t.col}"></span></div><div class="small mut">Sin pesos: ${x.u.v} · ${x.w.n} de ${crit().length} criterios puntuados · evaluado el ${fmtD(x.r.date)}${L.length?` · datos del equipo: ${ac} acerca${ac===1?'':'n'}, ${al} aleja${al===1?'':'n'}`:''}</div>${x.f.length?`<div class="small" style="color:var(--neg);font-weight:600">No pasa un innegociable: ${esc(x.f.join(', '))}</div>`:''}</div>`}).join('')}<p class="note">El índice ordena lo que vos mismo puntuaste; no mide nada nuevo. Una diferencia de menos de 10 puntos no decide. Si «sin pesos» da otro orden, la decisión depende de tus pesos: revisá si los sostenés.</p>`:'<div class="empty">Cuando evalúes una rotación, acá aparece un índice de 0 a 100 por equipo según tus pesos.</div>';
   const dp=lastRv.length?`<div class="legend">${lastRv.map(r=>`<span><span class="dot" style="background:${team(r.team).col}"></span>${team(r.team).name}${r.retro?' (retro)':''}</span>`).join('')}</div><div class="dpgrid">${crit().map(([id,l])=>`<span>${l}</span><div class="dp">${lastRv.map(r=>r.scores&&r.scores[id]?`<span class="tk" style="left:${(r.scores[id]-1)/4*92+4}%;background:${team(r.team).col}" title="${team(r.team).name}: ${r.scores[id]}"></span>`:'').join('')}</div>`).join('')}<span></span><div class="small mut" style="display:flex;justify-content:space-between"><span>1 · nada</span><span>5 · muchísimo</span></div></div>`:'<div class="empty">Cuando evalúes una rotación en la pestaña Rotaciones, acá se comparan todas criterio por criterio.</div>';
   el.innerHTML=`
   <div class="block"><p class="find">${esc(find)}</p><p class="mut">${esc(sub)}</p></div>
@@ -472,7 +485,8 @@ function renderMapa(){
   ${gazeMore.length?`<p class="note">De tus ${gazeMore.length} momentos «más», en ${gz} lo bueno fue que te vieran o reconocieran (${pct(gz,gazeMore.length)}%). ${pct(gz,gazeMore.length)>=40?'Es alto: puede ser que parte de lo que te gusta sea la aprobación más que la tarea. Tomalo como hipótesis.':''}</p>`:''}</div>
   <div class="block"><h2>A distancia</h2>${bl.length?`<p class="find">Coincidís con vos mismo en ${pct(agree,bl.length)}% de los momentos revisados a ciegas (${agree} de ${bl.length}).</p><p class="mut">Los que no coinciden son los más interesantes: ${bl.filter(m=>m.blind!==m.want).slice(0,3).map(m=>'«'+esc(m.what.slice(0,60))+(m.what.length>60?'…':'')+'»').join(', ')||'por ahora ninguno'}.</p>`:'<div class="empty">Todavía no revisaste momentos a ciegas.</div>'}</div>
   <div class="block"><h2>Semanas</h2>${ws.length?`<div class="legend"><span><span class="wk" style="width:16px;height:16px;background:var(--ink)"></span>Ganas</span><span><span class="wk" style="width:16px;height:16px;background:${sunCol('neutro')}"></span>Neutro</span><span><span class="wk" style="width:16px;height:16px;box-shadow:inset 0 0 0 2px var(--neg)"></span>Peso</span><span>Borde: equipo</span></div><div class="weeks">${weekCells}</div><p class="small mut" style="margin-top:8px">${lateBy}</p>`:'<div class="empty">Tus cierres de semana aparecen acá, uno por cuadrado.</div>'}</div>
-  <div class="block"><h2>Evaluaciones de rotación</h2>${dp}</div>
+  <div class="block"><h2>Índice de match</h2>${ixHtml}</div>
+  <div class="block"><h2>Criterio por criterio</h2>${dp}</div>
   <div class="block panel"><h3>Llevar esto a una conversación</h3><p class="mut small">Copia un resumen con todos tus registros para pegarlo en un chat y analizarlo juntos.</p><button class="sec" id="copyAll">Copiar resumen</button><textarea id="copyBox" hidden readonly style="margin-top:10px;min-height:140px"></textarea></div>
   <div class="block panel" id="bkPanel"><h3>Copia de seguridad</h3><p class="mut small">Tus registros viven solo en este navegador y no salen de este dispositivo. Descargá una copia una vez por mes y guardala en un lugar seguro: sirve para no perderlos y para pasarlos a otro dispositivo.</p><p class="small"><b>Última copia:</b> ${lastBk()?new Date(lastBk()).toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'}):'todavía ninguna'}</p><div class="row"><button class="pri" id="bkDown">Descargar copia</button><button class="sec" id="bkCopy">Copiar copia</button></div>
   <details style="margin-top:8px"><summary>Importar una copia</summary><p class="small mut">Elegí el archivo o pegá el texto de la copia. Se suma a lo que ya tenés; no borra nada.</p><input type="file" id="impFile" accept=".json,application/json" style="margin-bottom:10px;max-width:100%"><textarea id="impBox" placeholder="O pegá acá el texto de la copia"></textarea><button class="sec" id="impGo" style="margin-top:10px">Importar</button></details></div>`;
@@ -481,6 +495,8 @@ function summary(){const ms=all('m'),ws=all('w');const lines=['Brújula de rotac
   TEAMS.forEach(t=>{const s=stats(ms.filter(m=>m.team===t.id));lines.push(`${t.full}: ${s.n} momentos, ${s.p}% «más»`)});
   lines.push('','MOMENTOS');ms.sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>lines.push(`${m.date} | ${team(m.team).name}/${subName(m.team,m.sub)} | ${m.want==='more'?'MÁS':'MENOS'}${m.blind?' (a ciegas: '+m.blind+')':''} | ${(TASKS.find(t=>t[0]===m.task)||['','sin tarea'])[1]} | ${m.what} | señales: ${(m.sig||[]).map(s=>(SIGS.find(x=>x[0]===s)||[])[1]).join(', ')||'-'}`));
   lines.push('','SEMANAS');ws.sort((a,b)=>a.wk.localeCompare(b.wk)).forEach(w=>lines.push(`${w.wk} | ${team(w.team).name} | lunes: ${w.sun} | tarde: ${w.late??'-'} | dominio: ${w.mast??'-'} | una cosa: ${w.one||'-'} | hablé de: ${w.talk||'-'} | envidia: ${w.envy||'-'} | quedar bien: ${w.please||'-'}`));
+  lines.push('','PESOS (0-5)',crit().map(([id,l])=>l+': '+wOf(id)+(S.cfg.nn&&S.cfg.nn[id]?' (innegociable)':'')).join(' | '));
+  lines.push('','DATOS DEL EQUIPO');all('tn').sort((a,b)=>a.ts-b.ts).forEach(n=>lines.push(`${n.date} | ${team(n.team).name} | ${(TNT.find(x=>x[0]===n.type)||['','Dato'])[1]}${n.who?' con '+n.who:''} | ${n.lean} | ${n.text}`));
   lines.push('','ROTACIONES');TEAMS.forEach(t=>{const p=S.entries.get('pre-'+t.id);if(p)lines.push(`${t.name} antes: espero ${p.expect||'-'} | primera opción si ${p.first||'-'} | descarto si ${p.discard||'-'}`);all('rv').filter(r=>r.team===t.id).forEach(r=>lines.push(`${t.name} evaluación ${r.date}${r.retro?' (retro)':''}: ${crit().map(([id,l])=>l+' '+(r.scores?.[id]??'-')).join(', ')} | outflow mañana: ${r.outflow||'-'} | por qué: ${r.why||'-'} | voz: ${r.voice||'-'}`))});
   return lines.join('\n')}
 const backup=()=>JSON.stringify({app:'brujula',v:1,exported:today(),cfg:S.cfg,entries:[...S.entries.values()]});
@@ -496,19 +512,28 @@ $('#mapa').addEventListener('change',e=>{if(e.target.id!=='impFile'||!e.target.f
 
 /* ---------- ROTACIONES ---------- */
 const RV={};// team -> {scores,outflow}
+const TN={};// team -> {type,lean}
+const TNT=[['review','Mid-term o review'],['chat','Coffee chat'],['fb','Feedback que recibí'],['future','Mi visión de futuro acá'],['fact','Dato duro'],['other','Otro']];
+const LEAN=[['acerca','Me acerca'],['neutro','Neutro'],['aleja','Me aleja']];
+const wOf=id=>S.cfg.w&&S.cfg.w[id]!=null?S.cfg.w[id]:3;
+const idxOf=(r,weighted)=>{let a=0,b=0,n=0;crit().forEach(([id])=>{const sc=r.scores&&r.scores[id];if(!sc)return;const w=weighted?wOf(id):1;a+=w*(sc-1)/4;b+=w;n++});return b?{v:Math.round(a/b*100),n}:null};
+const nnFail=r=>crit().filter(([id])=>S.cfg.nn&&S.cfg.nn[id]&&r.scores&&r.scores[id]&&r.scores[id]<=2).map(c=>c[1]);
+const touchW=()=>{const d=S.cfg.wDates||[];return d.includes(today())?d:[...d,today()]};
 let openForm=null;
 function renderRot(){
-  const ae=document.activeElement&&document.activeElement.id;if(ae&&/^(p-|r-|critBox)/.test(ae))return;// no pisar lo que se escribe
-  const critEd=`<details class="card"><summary>Mis criterios de evaluación (${crit().length})</summary><p class="small mut">Uno por línea. Son los que usás para puntuar cada rotación. Agregá los tuyos, por ejemplo lo que necesitás para tu vida fuera del trabajo.</p><textarea id="critBox" style="min-height:190px">${esc(crit().map(c=>c[1]).join('\n'))}</textarea><button class="sec" id="critSave" style="margin-top:10px">Guardar criterios</button></details>`;
-  $('#rots').innerHTML=critEd+TEAMS.map((t,i)=>{const p=S.entries.get('pre-'+t.id)||{};const rs=all('rv').filter(r=>r.team===t.id).sort((a,b)=>b.ts-a.ts);const f=RV[t.id]||(RV[t.id]={scores:{},outflow:null});
+  const ae=document.activeElement&&document.activeElement.id;if(ae&&/^(p-|r-|sd-|tn-|critBox)/.test(ae))return;
+  const firstR=!$('#rots').children.length,openK=new Set([...document.querySelectorAll('#rots details')].filter(d=>d.open).map(d=>d.dataset.k));// no pisar lo que se escribe
+  const critEd=`<details class="card" data-k="crit"><summary>Mis criterios de evaluación (${crit().length})</summary><p class="small mut">Uno por línea. Son los que usás para puntuar cada rotación. Agregá los tuyos, por ejemplo lo que necesitás para tu vida fuera del trabajo.</p><textarea id="critBox" style="min-height:190px">${esc(crit().map(c=>c[1]).join('\n'))}</textarea><button class="sec" id="critSave" style="margin-top:10px">Guardar criterios</button><h3 style="margin-top:22px">Pesos</h3><p class="small mut">Cuánto pesa cada criterio para vos, de 0 (no cuenta) a 5 (decisivo). Con esto se arma el índice de match del Mapa. Fijalos antes de mirar resultados. Marcá «innegociable» si con una nota de 1 o 2 descartarías el equipo.</p>${crit().map(([id,l])=>`<div class="crit" style="margin-bottom:16px"><span>${esc(l)}</span><div><div class="seg">${[0,1,2,3,4,5].map(n=>`<button type="button" class="chip" data-w="${id}|${n}" aria-pressed="${wOf(id)===n}">${n}</button>`).join('')}</div><label class="row small" style="margin-top:6px;gap:8px"><input type="checkbox" data-nn="${id}" ${S.cfg.nn&&S.cfg.nn[id]?'checked':''} style="width:20px;height:20px"> Innegociable</label></div></div>`).join('')}</details>`;
+  const sc=sched();const schedEd=`<details class="card" data-k="sched"><summary>Fechas de las rotaciones</summary><p class="small mut">Con estas fechas la Brújula elige sola en qué equipo estás. Poné el día en que empieza cada una.</p>${TEAMS.map(t=>`<div class="crit"><label for="sd-${t.id}"><span class="dot" style="background:${t.col}"></span> ${t.full} empieza el</label><input type="date" id="sd-${t.id}" value="${sc[t.id]||''}"></div>`).join('')}<button class="sec" id="schedSave" style="margin-top:6px">Guardar fechas</button></details>`;
+  $('#rots').innerHTML=schedEd+critEd+TEAMS.map((t,i)=>{const p=S.entries.get('pre-'+t.id)||{};const rs=all('rv').filter(r=>r.team===t.id).sort((a,b)=>b.ts-a.ts);const f=RV[t.id]||(RV[t.id]={scores:{},outflow:null});const g=TN[t.id]||(TN[t.id]={type:null,lean:null});const ns=all('tn').filter(n=>n.team===t.id).sort((a,b)=>b.ts-a.ts);
     return`<div class="card"><div class="hd"><span class="dot" style="background:${t.col};width:16px;height:16px"></span><h2 style="margin:0">${t.full}</h2><span class="pill ${i===curIdx()?'now':''}">${stLabel(i)}</span></div><p class="mut small">${t.subs.map(s=>esc(s[1])).join(' · ')}</p>
-    <details ${!p.ts&&i>=curIdx()?'open':''}><summary>Antes de entrar${p.ts?' · escrito el '+fmtD(p.date):''}</summary>
+    <details data-k="pre-${t.id}" ${!p.ts&&i>=curIdx()?'open':''}><summary>Antes de entrar${p.ts?' · escrito el '+fmtD(p.date):''}</summary>
       <div class="field"><label class="lab" for="p-${t.id}-e">¿Qué espero encontrar?</label><textarea id="p-${t.id}-e">${esc(p.expect)}</textarea></div>
       <div class="field"><label class="lab" for="p-${t.id}-f">Sería mi primera opción de outflow si…</label><textarea id="p-${t.id}-f">${esc(p.first)}</textarea></div>
       <div class="field"><label class="lab" for="p-${t.id}-d">Lo descartaría si…</label><textarea id="p-${t.id}-d">${esc(p.discard)}</textarea></div>
       <button class="sec" data-pre="${t.id}">Guardar</button>${i<curIdx()?'<p class="small mut" style="margin-top:8px">Si ya pasó, escribí lo que recordás que esperabas, sabiendo que la memoria se acomoda.</p>':''}
     </details>
-    <details ${openForm===t.id?'open':''} data-rvd="${t.id}"><summary>Nueva evaluación${rs.length?` · ${rs.length} hecha${rs.length===1?'':'s'}`:''}</summary>
+    <details data-k="rv-${t.id}" ${openForm===t.id?'open':''} data-rvd="${t.id}"><summary>Nueva evaluación${rs.length?` · ${rs.length} hecha${rs.length===1?'':'s'}`:''}</summary>
       <p class="small mut">Del 1 (nada) al 5 (muchísimo): ¿cuánto me da este equipo de…?</p>
       ${crit().map(([cid,l])=>`<div class="crit"><span>${l}</span><div class="seg">${[1,2,3,4,5].map(n=>`<button type="button" class="chip" data-sc="${t.id}|${cid}|${n}" aria-pressed="${f.scores[cid]===n}">${n}</button>`).join('')}</div></div>`).join('')}
       <div class="field"><span class="lab">Si mañana me ofrecen outflow acá, ¿digo que sí?</span><div class="seg">${[['si','Sí'],['no','No'],['nose','No sé']].map(([v,l])=>`<button type="button" class="chip" data-of="${t.id}|${v}" aria-pressed="${f.outflow===v}">${l}</button>`).join('')}</div></div>
@@ -518,22 +543,39 @@ function renderRot(){
       <button class="pri" data-rv="${t.id}">Guardar evaluación</button>
     </details>
     ${rs.length?`<ul class="list" style="margin-top:8px">${rs.map(r=>{const v=crit().map(c=>r.scores?.[c[0]]).filter(Boolean);return`<li><span class="dot" style="background:${t.col};margin-top:6px"></span><div><b>${fmtD(r.date)}</b>${r.retro?' <span class="mut">(retro)</span>':''} · promedio ${v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'-'} · outflow: ${r.outflow==='si'?'sí':r.outflow==='no'?'no':'no sé'}${r.why?`<div class="small mut">${esc(r.why)}</div>`:''}</div><button class="link" data-del="${r.id}">Borrar</button></li>`}).join('')}</ul>`:''}
+    <details data-k="tn-${t.id}"><summary>Datos del equipo${ns.length?' · '+ns.length:''}</summary>
+      <p class="small mut">Reviews, coffee chats, feedback, tu visión de futuro acá, datos duros como contratación u horarios. Anotá lo que te llevás, cerca de cuando pasó.</p>
+      <div class="field"><span class="lab">Tipo</span><div class="chips">${TNT.map(([v,l])=>`<button type="button" class="chip" data-tt="${t.id}|${v}" aria-pressed="${g.type===v}">${l}</button>`).join('')}</div></div>
+      <div class="field"><label class="lab" for="tn-${t.id}-who">¿Con quién? (opcional)</label><input type="text" id="tn-${t.id}-who" maxlength="80"></div>
+      <div class="field"><label class="lab" for="tn-${t.id}-x">¿Qué me llevo?</label><textarea id="tn-${t.id}-x" maxlength="1200"></textarea></div>
+      <div class="field"><span class="lab">¿Me acerca o me aleja de este equipo?</span><div class="seg">${LEAN.map(([v,l])=>`<button type="button" class="chip" data-tl="${t.id}|${v}" aria-pressed="${g.lean===v}">${l}</button>`).join('')}</div></div>
+      <button class="sec" data-tn="${t.id}">Guardar dato</button>
+      ${ns.length?`<ul class="list" style="margin-top:10px">${ns.map(n=>`<li><span class="mk ${n.lean==='aleja'?'less':'more'}" style="${n.lean==='aleja'?'color:var(--neg)':n.lean==='acerca'?'':'opacity:.3'}"></span><div><b>${esc((TNT.find(x=>x[0]===n.type)||['','Dato'])[1])}</b>${n.who?' · '+esc(n.who):''} <span class="mut">· ${fmtD(n.date)}</span><div class="small">${esc(n.text)}</div></div><button class="link" data-del="${n.id}">Borrar</button></li>`).join('')}</ul>`:''}
+    </details>
     </div>`}).join('');
+  if(!firstR)document.querySelectorAll('#rots details').forEach(d=>d.open=openK.has(d.dataset.k));
 }
+$('#rots').addEventListener('change',e=>{const id=e.target.dataset&&e.target.dataset.nn;if(id)setCfg({nn:{...(S.cfg.nn||{}),[id]:e.target.checked},wDates:touchW()},true)});
 $('#rots').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.rvd)openForm=d.open?d.dataset.rvd:(openForm===d.dataset.rvd?null:openForm)},true);
 $('#rots').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id==='schedSave'){const n={};TEAMS.forEach(t=>{const v=$('#sd-'+t.id).value;if(v)n[t.id]=v});document.activeElement&&document.activeElement.blur();await setCfg({sched:n});toast('Fechas guardadas.');return}
   if(b.id==='critSave'){const old=crit(),seen=new Set();const next=$('#critBox').value.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,12).map(l=>{const o=old.find(c=>c[1]===l);let id=o?o[0]:slug(l);while(seen.has(id))id+='-2';seen.add(id);return[id,l]});if(!next.length){toast('Dejá al menos un criterio.');return}$('#critBox').blur();await setCfg({crit:next});toast('Criterios guardados.');return}
+  if(b.dataset.w){const [c,n]=b.dataset.w.split('|');setCfg({w:{...(S.cfg.w||{}),[c]:+n},wDates:touchW()},true);b.parentNode.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(b.dataset.tt||b.dataset.tl){const k=b.dataset.tt?'type':'lean';const [t,v]=(b.dataset.tt||b.dataset.tl).split('|');TN[t][k]=TN[t][k]===v?null:v;b.parentNode.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b&&TN[t][k]===v));return}
+  if(b.dataset.tn){const t=b.dataset.tn,g=TN[t],text=$(`#tn-${t}-x`).value.trim();if(!text){toast('Escribí qué te llevás.');return}
+    const obj={kind:'tn',team:t,date:today(),ts:Date.now(),type:g.type||'other',who:$(`#tn-${t}-who`).value.trim(),text,lean:g.lean||'neutro'};b.blur();TN[t]={type:null,lean:null};if(await put(uid(),obj))toast('Dato guardado.');return}
   if(b.dataset.sc){const [t,c,n]=b.dataset.sc.split('|');RV[t].scores[c]=RV[t].scores[c]===+n?undefined:+n;b.parentNode.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.sc===b.dataset.sc&&RV[t].scores[c]===+n));return}
   if(b.dataset.of){const [t,v]=b.dataset.of.split('|');RV[t].outflow=RV[t].outflow===v?null:v;b.parentNode.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.of===b.dataset.of&&RV[t].outflow===v));return}
   if(b.dataset.pre){const t=b.dataset.pre,g=k=>$(`#p-${t}-${k}`).value.trim();const old=S.entries.get('pre-'+t);b.blur();if(await put('pre-'+t,{kind:'pre',team:t,date:old?.date||today(),ts:old?.ts||Date.now(),edited:Date.now(),expect:g('e'),first:g('f'),discard:g('d')}))toast('Guardado.');return}
   if(b.dataset.rv){const t=b.dataset.rv,f=RV[t];if(!Object.values(f.scores).some(Boolean)){toast('Puntuá al menos un criterio.');return}
     const r=$(`#r-${t}-r`);const obj={kind:'rv',team:t,date:today(),ts:Date.now(),scores:Object.fromEntries(Object.entries(f.scores).filter(([,v])=>v)),outflow:f.outflow,why:$(`#r-${t}-w`).value.trim(),voice:$(`#r-${t}-v`).value.trim(),retro:r?r.checked:false};
-    b.blur();RV[t]={scores:{},outflow:null};openForm=null;if(await put(uid(),obj))toast('Evaluación guardada.');return}
+    b.blur();RV[t]={scores:{},outflow:null};openForm=null;b.closest('details').open=false;if(await put(uid(),obj))toast('Evaluación guardada.');return}
   if(b.dataset.del)del(b.dataset.del)};
 
 /* ---------- render ---------- */
 function render(){
-  remind();
+  applyAuto();remind();
+  $('#curNote').innerHTML=isManual()?'Elegido a mano. <button class="link" id="curAuto">Volver a automático</button>':'Automático, según las fechas de tus rotaciones.';
   $('#curTeam').value=S.cfg.team;fillSub($('#curSub'),S.cfg.team,S.cfg.sub);
   if(view==='hoy')renderHoy();else if(view==='sem')renderSem();else if(view==='ciego')renderCiego();else if(view==='mapa')renderMapa();else renderRot();
 }
