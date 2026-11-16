@@ -80,7 +80,7 @@ textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid v
 .list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}
 .list .mk{margin-top:5px}
 .tag{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mut);white-space:nowrap}
-.days{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:4px;margin:6px 0 2px}
+.days{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;max-width:420px;margin:6px 0 2px}
 .days span{aspect-ratio:1;border-radius:6px;background:var(--line);display:block}
 .days span.on{background:var(--ink)}
 .days span.half{background:color-mix(in srgb,var(--ink) 40%,var(--line))}
@@ -124,7 +124,7 @@ td.c{text-align:center}
 .dv i{display:block;height:16px;min-width:0}.dv .l i{background:var(--neg);border-radius:4px 0 0 4px}.dv .r i{background:var(--ink);border-radius:0 4px 4px 0}
 .dv .c{padding-left:10px;white-space:nowrap;color:var(--mut);font-variant-numeric:tabular-nums}.dv .h{font-size:13px;color:var(--mut);font-weight:600}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}.tile{background:var(--soft);border-radius:14px;padding:12px}.tile b{display:block;font-size:clamp(24px,6vw,34px);font-weight:800;line-height:1.1}.tile span{font-size:13px;color:var(--mut)}
-.cal{max-width:560px;display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,auto);gap:3px}.cal span{aspect-ratio:1;border-radius:3px;background:var(--line)}.cal .a{background:color-mix(in srgb,var(--ink) 40%,var(--line))}.cal .b{background:var(--ink)}.cal .f{background:transparent}
+.cal{max-width:560px;display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,auto);gap:3px}.cal span{aspect-ratio:1;border-radius:3px;background:var(--line)}.cal .a{background:color-mix(in srgb,var(--ink) 40%,var(--line))}.cal .b{background:var(--ink)}.cal .f{background:transparent}
 .fig{position:relative;height:230px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}.fig text{font:13px Figtree,sans-serif;fill:var(--mut)}
 .read{min-height:24px;font-size:14px;margin-top:4px}
 .dpgrid{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);gap:4px 14px;align-items:center;font-size:14px}
@@ -218,7 +218,7 @@ dialog::backdrop{background:rgba(10,12,16,.45)}
       <p class="small mut" id="mErr" role="status" style="margin-top:8px"></p>
     </form>
     <div>
-      <h3>Últimos 14 días</h3>
+      <h3>Últimos 10 días hábiles</h3>
       <div class="days" id="days" aria-label="Días con registro"></div>
       <p class="small mut" id="daysTxt"></p>
       <h3 style="margin-top:22px">Últimos momentos</h3>
@@ -323,11 +323,11 @@ dialog::backdrop{background:rgba(10,12,16,.45)}
 <script>
 {
 const TEAMS=[
- {id:'vcf',name:'VCF',full:'Value Chain Finance',col:'var(--vcf)',subs:[['orig','Origination & Structuring'],['ptm','PTM · monitoring & management']]},
+ {id:'vcf',name:'VCF',full:'Value Chain Finance',col:'var(--vcf)',subs:[['orig','Origination & Structuring'],['ptm','PTM · Portfolio & Transaction Management']]},
  {id:'cl',name:'CL',full:'Corporate Lending',col:'var(--cl)',subs:[['tm','Credit analyst · Transport & Mobility']]},
- {id:'pf',name:'PF',full:'Project Finance',col:'var(--pf)',subs:[['ose','OSE · origination & structuring'],['rpm','RPM · portfolio after-deal']]},
+ {id:'pf',name:'PF',full:'Project Finance',col:'var(--pf)',subs:[['ose','OSE · Origination & Structuring'],['rpm','RPM · Relationship & Portfolio Management']]},
  {id:'ll',name:'LL',full:'Leveraged Lending',col:'var(--ll)',subs:[['an','Analista']]}];
-const TASKS=[['model','Modelado'],['credit','Análisis de crédito'],['legal','Docs legales'],['struct','Estructuración'],['client','Clientes y sponsors'],['memo','Memos y presentaciones'],['monitor','Monitoreo y reviews'],['support','Soporte y urgencias'],['meet','Reuniones internas'],['learn','Aprender sector o empresa'],['teach','Explicar a otros']];
+const TASKS=[['model','Modelado'],['credit','Análisis de crédito'],['legal','Docs legales'],['struct','Estructuración'],['client','Clientes y sponsors'],['memo','Memos y presentaciones'],['monitor','Monitoreo'],['compliance','Compliance y policy'],['support','Soporte y urgencias'],['meet','Reuniones internas'],['learn','Aprender sector o empresa'],['teach','Explicar a otros']];
 const SIGS=[['flow','Perdí la noción del tiempo',1],['pull','Seguí aunque podía cortar',1],['seek','Busqué más por mi cuenta',1],['told','Lo conté fuera del laburo',1],['control','Sentí que tenía el control',1],['procr','Lo postergué',-1],['lost','Se me fue de control',-1],['gaze','Lo bueno fue que me vieran o reconocieran',0]];
 const DEF_CRIT=[['learn','Aprendizaje y crecimiento'],['pace','Ritmo sostenible, con picos y valles'],['money','Sueldo y prestigio'],['people','La gente y el clima'],['mastery','Dominio y control de lo que hago'],['teach','Poder enseñar y compartir'],['impact','Impacto que veo']];
 const WHO=[['solo','Solo'],['pares','Con pares'],['seniors','Con seniors'],['clientes','Con clientes o sponsors']];
@@ -442,8 +442,8 @@ const mk=w=>`<span class="mk ${w==='more'?'more':'less'}" title="${w==='more'?'M
 function renderHoy(){
   const ms=all('m').sort((a,b)=>(b.date+b.ts).localeCompare(a.date+a.ts));
   const byDay={};ms.forEach(m=>byDay[m.date]=(byDay[m.date]||0)+1);
-  let cells='',n=0;for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const c=byDay[k]||0;if(c)n++;cells+=`<span class="${c>=2?'on':c?'half':''}" title="${fmtD(k)}: ${c}"></span>`}
-  $('#days').innerHTML=cells;$('#daysTxt').textContent=n?`${n} de 14 días con al menos un momento. Cuadrado lleno: anotaste dos o más.`:'Todavía no hay momentos. El primero tarda menos de un minuto.';
+  let cells='',n=0;{const ks=[],d=new Date();while(ks.length<10){const wd=d.getDay();if(wd!==0&&wd!==6)ks.unshift(iso(d));d.setDate(d.getDate()-1)}ks.forEach(k=>{const c=byDay[k]||0;if(c)n++;cells+=`<span class="${c>=2?'on':c?'half':''}" title="${fmtD(k)}: ${c}"></span>`})}
+  $('#days').innerHTML=cells;$('#daysTxt').textContent=n?`${n} de 10 días con al menos un momento. Cuadrado lleno: anotaste dos o más.`:'Todavía no hay momentos. El primero tarda menos de un minuto.';
   $('#mList').innerHTML=ms.length?ms.slice(0,12).map(m=>`<li>${mk(m.want)}<div><div>${esc(m.what)}</div><div class="tag"><span class="dot" style="background:${team(m.team).col}"></span>${team(m.team).name} · ${fmtD(m.date)}${m.task?' · '+esc((TASKS.find(t=>t[0]===m.task)||[])[1]):''}${m.ctx&&m.ctx!=='otro'?' · '+(m.ctx==='deal'?'deal nuevo':'review'):''}</div></div><div class="row" style="gap:0"><button class="link" data-ed="${m.id}">Editar</button><button class="link" data-del="${m.id}">Borrar</button></div></li>`).join(''):'<li style="display:block" class="mut">Acá vas a ver lo que anotes.</li>';
   paintM();
 }
@@ -524,8 +524,8 @@ function renderMapa(){
   // constancia
   const byDay={};ms.forEach(m=>byDay[m.date]=(byDay[m.date]||0)+1);
   let streak=0;{const d=new Date();if(!byDay[iso(d)])d.setDate(d.getDate()-1);for(let i=0;i<400;i++){const wd=d.getDay();if(wd!==0&&wd!==6){if(byDay[iso(d)])streak++;else break}d.setDate(d.getDate()-1)}}
-  const NW=26,end=new Date();end.setDate(end.getDate()+(7-(end.getDay()||7)));let cal='';for(let i=NW*7-1;i>=0;i--){const d=new Date(end);d.setDate(end.getDate()-i);const k=iso(d),c=byDay[k]||0;cal+=`<span class="${k>today()?'f':c>=2?'b':c?'a':''}" title="${fmtD(k)}: ${c} momento${c===1?'':'s'}"></span>`}
-  const calHtml=`<div class="tiles"><div class="tile"><b>${ms.length}</b><span>momentos</span></div><div class="tile"><b>${Object.keys(byDay).length}</b><span>días con registro</span></div><div class="tile"><b>${streak}</b><span>días hábiles seguidos</span></div></div><div class="cal" style="grid-template-columns:repeat(${NW},minmax(0,1fr))" aria-label="Momentos por día, últimas ${NW} semanas">${cal}</div><div class="legend" style="margin-top:8px"><span>Últimas ${NW} semanas, de lunes a domingo</span><span><span class="wk" style="width:12px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--ink) 40%,var(--line))"></span>1 momento</span><span><span class="wk" style="width:12px;height:12px;border-radius:3px;background:var(--ink)"></span>2 o más</span></div>`;
+  const NW=26,end=new Date();end.setDate(end.getDate()+(7-(end.getDay()||7)));let cal='';for(let i=NW*7-1;i>=0;i--){const d=new Date(end);d.setDate(end.getDate()-i);if(d.getDay()===0||d.getDay()===6)continue;const k=iso(d),c=byDay[k]||0;cal+=`<span class="${k>today()?'f':c>=2?'b':c?'a':''}" title="${fmtD(k)}: ${c} momento${c===1?'':'s'}"></span>`}
+  const calHtml=`<div class="tiles"><div class="tile"><b>${ms.length}</b><span>momentos</span></div><div class="tile"><b>${Object.keys(byDay).length}</b><span>días con registro</span></div><div class="tile"><b>${streak}</b><span>días hábiles seguidos</span></div></div><div class="cal" style="grid-template-columns:repeat(${NW},minmax(0,1fr))" aria-label="Momentos por día, últimas ${NW} semanas">${cal}</div><div class="legend" style="margin-top:8px"><span>Últimas ${NW} semanas, de lunes a viernes</span><span><span class="wk" style="width:12px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--ink) 40%,var(--line))"></span>1 momento</span><span><span class="wk" style="width:12px;height:12px;border-radius:3px;background:var(--ink)"></span>2 o más</span></div>`;
   // en el tiempo
   TREND=[];if(ms.length){const ds=ms.map(m=>m.date).sort(),d=new Date(ds[0]+'T12:00:00'),last=new Date(ds[ds.length-1]+'T12:00:00');const seen=new Set();for(let i=0;i<200&&(d<=last||!seen.has(isoWeek(iso(last))));i++){const k=isoWeek(iso(d));if(!seen.has(k)){seen.add(k);const L=ms.filter(m=>isoWeek(m.date)===k),cnt={};L.forEach(m=>cnt[m.team]=(cnt[m.team]||0)+1);TREND.push({k,n:L.length,more:L.filter(m=>m.want==='more').length,team:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||null})}d.setDate(d.getDate()+7)}}
   const trendHtml=TREND.filter(w=>w.n).length>=2?`<p class="mut small">Cada punto es una semana: qué parte de tus momentos fue «más de esto». El color es el equipo. Punto hueco: menos de 3 momentos, poca base.</p><div class="legend">${TEAMS.filter(t=>TREND.some(w=>w.team===t.id)).map(t=>`<span><span class="dot" style="background:${t.col}"></span>${t.name}</span>`).join('')}</div><div class="fig" id="trendFig"><svg role="img" aria-label="Porcentaje semanal de momentos más de esto"></svg></div><div class="read mut" id="trendRead">Tocá un punto para ver la semana.</div>`:'<div class="empty">Con dos semanas de momentos, acá aparece cómo cambia tu enganche con el tiempo. Sirve para ver el efecto novedad: el primer mes en un equipo contra el cuarto.</div>';
