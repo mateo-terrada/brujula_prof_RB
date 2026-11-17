@@ -57,7 +57,7 @@ AULA.simulaciones = [
     tema: "Bonos, tasas, CER y dólar" },
   { id: "rv", titulo: "Simulación de renta variable", clave: "elEscritorio_cartera_rv_v1", href: "cartera.html?sim=rv",
     req: ["mercado", "perfil", "empresas", "carterasrv"], habilita: "Taller de carteras de acciones",
-    bajada: "Una jubilada que necesita estabilidad y un inversor que quiere crecer, con doce vehículos para repartir entre geografías y sectores. Concentración, correlación y caídas: qué pasa cuando todo cae junto y cuando una sola empresa falla.",
+    bajada: "Una jubilada que necesita estabilidad y un inversor que quiere crecer, con catorce vehículos para repartir entre geografías y sectores. Concentración, correlación y caídas: qué pasa cuando todo cae junto y cuando una sola empresa falla.",
     tema: "Acciones, ETFs, geografías y sectores" }
 ];
 

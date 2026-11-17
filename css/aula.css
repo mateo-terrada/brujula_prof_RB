@@ -1157,3 +1157,9 @@ input[type=range]:focus-visible { outline: 2px solid var(--teal-wash); }
 .sim-card p { margin: 0; color: var(--ink-soft); }
 .sim-card .btn, .sim-card .tag { align-self: flex-start; margin-top: auto; }
 .sim-card.is-locked { opacity: .78; background: var(--paper); }
+
+.sim-igual { margin-top: 4px; font-size: 14px; }
+.sim-igual summary { cursor: pointer; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; width: fit-content; }
+.sim-igual[open] { padding: 12px 14px; border: 1px solid var(--line, #d9d3c5); border-radius: 10px; background: var(--paper, #fbf8f1); }
+.sim-igual p { margin: 8px 0 12px; }
+.sim-igual .btn { align-self: auto; margin-top: 0; }

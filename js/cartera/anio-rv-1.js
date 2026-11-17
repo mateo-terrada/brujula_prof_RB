@@ -24,7 +24,7 @@
 
   C.CFG = {
     clave: "elEscritorio_cartera_rv_v1", titulo: "Simulación de renta variable", etiqueta: "Año de acciones", periodo: "Diciembre 2026 a noviembre 2027",
-    h1: "Doce meses, doce vehículos, dos clientes y un mercado que no avisa",
+    h1: "Doce meses, catorce vehículos, dos clientes y un mercado que no avisa",
     lead: "Heredás dos cuentas de un colega que se fue. Una jubilada necesita estabilidad; un inversor joven quiere crecer. Tenés geografías, sectores y empresas para repartir: cada mes el mercado se mueve, ellos reaccionan y vos proponés.",
     nLiq: "Plazo y liquidez",
     metricas: (m0, m) => {

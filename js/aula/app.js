@@ -54,7 +54,11 @@
         <h3>${esc(sim.titulo)}</h3>
         <p>${esc(sim.bajada)}</p>
         ${pc ? `<p class="hint"><strong>Tu partida:</strong> ${esc(pc.lineas[0])}.</p>` : ""}
-        ${cerrada ? `<p class="hint">Se habilita al terminar el ${esc(sim.habilita)}. Te falta: ${faltan.map(m => esc(m.titulo)).join(" · ")}.</p><span class="tag">Bloqueada</span>`
+        ${cerrada ? `<p class="hint">Se habilita al terminar el ${esc(sim.habilita)}. Te falta: ${faltan.map(m => esc(m.titulo)).join(" · ")}.</p><span class="tag">Bloqueada</span>
+          <details class="sim-igual"><summary>Entrar igual</summary>
+            <p>Esta simulación usa lo que se ve en ${faltan.length > 1 ? "esos módulos" : "ese módulo"}. Si entrás sin haberlo hecho, algunos términos y decisiones te van a quedar poco claros. Podés entrar igual y volver al curso cuando quieras.</p>
+            <a class="btn btn-ghost" href="${sim.href}">Entrar de todos modos ${flecha}</a>
+          </details>`
           : `<a class="btn btn-primary" href="${sim.href}">${pc ? "Seguir la partida" : "Empezar"} ${flecha}</a>`}
       </article>`;
     };
