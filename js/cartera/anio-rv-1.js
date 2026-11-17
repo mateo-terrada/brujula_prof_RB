@@ -66,9 +66,9 @@
       dice: () => "Querida, mi nieto me dice que todo el mundo compra tecnología, y yo tengo YPF, Galicia y algo de MercadoLibre, que casi no se mueven. ¿No debería vender eso y comprar tecnología de afuera?",
       nota: X => nota(G(), 0, X, "Una cartera heredada, con muchas decisiones juntas.", `Tiene ${mt(G(), 0).acc}% en acciones y ${fmt(mt(G(), 0).arg, 0)}% con riesgo argentino. Para una jubilada con tope de 40% en acciones, mirá primero cuánto tiene, no qué subió.`),
       msgs: () => [
-        op("Tu nieto tiene razón: la tecnología es lo que mejor anda. Vendamos lo argentino y pasemos esa plata al Nasdaq, que va a seguir subiendo.", 6, "Perseguís lo que más subió y le pedís más riesgo a una jubilada.", 3),
-        op("Antes de agregar nada, miremos qué tenés: 60% en acciones es más de lo que te corresponde, y casi todo depende de Argentina. Te propongo bajar acciones y repartir mejor, con algo de afuera, sin cambiar tu perfil.", 25, "Cambiás la pregunta (qué te corresponde) y proponés algo concreto.", 7),
-        op("Tu cartera tiene beta 0,71 y 70% de exposición país. La política de inversión para tu perfil recomienda reducir ambas métricas.", 12, "Tiene razón técnica pero ella no entiende nada.", -3)],
+        op("Tu nieto tiene razón: la tecnología es lo que mejor anda y es el momento de entrar. Vendamos lo argentino y pasemos esa plata a Microsoft y Nvidia, que van a seguir subiendo por la inteligencia artificial.", 6, "Perseguís lo que más subió y le pedís más riesgo a una jubilada.", 3),
+        op("Antes de agregar nada, miremos qué tenés: 60% en acciones es más de lo que te corresponde y casi todo es Argentina. Propongo bajar acciones y repartir mejor.", 25, "Cambiás la pregunta (qué te corresponde) y proponés algo concreto.", 7),
+        op("Tu cartera tiene un beta de 0,71 y 70% de exposición a un solo país. La política de inversión para tu perfil recomienda reducir ambas métricas antes de evaluar cualquier cambio de composición.", 12, "Tiene razón técnica pero ella no entiende nada.", -3)],
       incoh: (k, m) => k === "2" && (m.acc > 40 || m.arg > 35) ? "Le dijiste que ibas a bajar acciones y la dependencia de Argentina, pero la propuesta no lo hace." : null,
       okKey: "Corregiste lo de fondo (peso en acciones y en Argentina), no el último ranking de rendimientos.",
       resp: ["Ah, no lo había pensado así. Prefiero tener menos nervios. Dale.", "Bueno... ¿entonces compro tecnología o no?", "No entendí nada, pero vos sabés."]
@@ -78,9 +78,9 @@
       dice: () => "Nasdaq en máximos y MELI volando. Quiero pasar la plata que tengo quieta a MELI y a Microsoft. Tengo 25 años por delante: no necesito colchón.",
       nota: X => nota(T(), 0, X, "Buen mes, pero la cartera depende de una sola idea.", `Tecnología pesa ${mt(T(), 0).secMax}% del total y MELI sola, ${mt(T(), 0).max}%. Cuando funciona, se siente como una buena estrategia.`),
       msgs: () => [
-        op("Dale, te armo todo en MELI y Microsoft. Con tu horizonte aguantás lo que venga y la tendencia está clarísima.", 6, "Le das la razón y subís la concentración.", 3),
-        op("Me gusta tu convicción, y tu horizonte justifica ser agresivo. Pero hoy el 65% de tu cartera es tecnología y 35% una sola empresa. Mantengamos tu idea y repartamos el resto: otras geografías y otros sectores.", 25, "Respetás su idea y la separás del riesgo de concentración.", 7),
-        op("El Nasdaq cotiza a múltiplos exigentes y hay riesgo de corrección; las valuaciones sugieren cautela en el corto plazo.", 12, "Dudás del mercado, pero no le proponés qué hacer.", -2)],
+        op("Dale, te armo todo en MELI y Microsoft: con tu horizonte aguantás lo que venga y la tendencia está clarísima. Si cae, comprás más y bajás el precio promedio de entrada.", 6, "Le das la razón y subís la concentración.", 3),
+        op("Me gusta tu convicción y tu horizonte justifica ser agresivo, pero hoy 65% de tu cartera es tecnología y 35% una sola empresa. Mantengamos tu idea y repartamos el resto en otras geografías y sectores.", 25, "Respetás su idea y la separás del riesgo de concentración.", 7),
+        op("El Nasdaq cotiza a múltiplos exigentes y hay riesgo de corrección: las valuaciones sugieren cautela en el corto plazo, así que conviene revisar con calma antes de decidir cualquier compra nueva.", 12, "Dudás del mercado, pero no le proponés qué hacer.", -2)],
       incoh: (k, m) => k === "2" && (m.max > 15 || m.secMax > 45) ? "Le dijiste que ibas a repartir, pero la propuesta sigue concentrada." : null,
       okKey: "Respetaste su idea y la ordenaste: tecnología sí, pero sin que una empresa o un sector decidan todo.",
       resp: ["Tiene sentido. Mi idea sigue, pero no todo en un solo canasto. Hacelo.", "Está bien... pero no me dijiste qué hago.", "¿Entonces no puedo apostar a lo que creo? Qué aburrido."]
@@ -104,9 +104,9 @@
       dice: () => "Vi que la tecnología se cayó. Menos mal que no compré lo que decía mi nieto. Pero una cosa: ¿por qué mis acciones del banco argentino no subieron cuando subieron los bancos de afuera?",
       nota: X => nota(G(), 1, X, "Mismo sector, distinto país.", `Los bancos de EE.UU. ganaron por las tasas de allá. Galicia depende sobre todo del riesgo país (${sg(X.F.rp, 0)} pb este mes).`, true),
       msgs: () => [
-        op("Los bancos argentinos y los de afuera son el mismo sector, así que tarde o temprano van a seguir el mismo camino. Quedate tranquila.", 6, "Ignorás que lo argentino responde al riesgo país, no a las tasas de EE.UU.", 3),
-        op("Son el mismo sector, pero otro país: a los bancos de EE.UU. los ayudan las tasas de allá; a Galicia la mueve el riesgo país, que subió. Por eso conviene tener de los dos y no depender de uno solo.", 25, "Explicás la diferencia con una frase y la conectás con diversificar.", 7),
-        op("Cada acción tiene su propia dinámica y no se pueden hacer comparaciones directas entre mercados.", 10, "Cierto, pero no ayuda a entender.", -2)],
+        op("Los bancos argentinos y los de afuera son el mismo sector, así que tarde o temprano van a seguir el mismo camino. Quedate tranquila: lo que sube allá termina subiendo acá.", 6, "Ignorás que lo argentino responde al riesgo país, no a las tasas de EE.UU.", 3),
+        op("Son el mismo sector pero otro país: a los bancos de EE.UU. los ayudan las tasas de allá; a Galicia la mueve el riesgo país, que subió. Por eso conviene tener de los dos y no depender de uno.", 25, "Explicás la diferencia con una frase y la conectás con diversificar.", 7),
+        op("Cada acción tiene su propia dinámica y las comparaciones directas entre mercados distintos suelen ser engañosas. Mejor mirar cada empresa por separado, con sus números, y decidir después.", 10, "Cierto, pero no ayuda a entender.", -2)],
       incoh: (k, m) => k === "2" && m.arg > 40 ? "Le dijiste que conviene no depender de un solo país, pero la propuesta sigue muy argentina." : null,
       okKey: "Aprovechaste la pregunta para mostrar que sector y país son dos ejes distintos.",
       resp: ["Ahora lo entiendo: son bancos, pero no es lo mismo. Gracias.", "Mmm... no me quedó claro, pero bueno.", "Bueno, será así."]
@@ -117,9 +117,9 @@
         : "Se cayó la tecnología. ¿Aprovechamos para comprar más barato? Siempre rebota.",
       nota: X => nota(T(), 1, X, "Una corrección, no un colapso.", `Cuánto te pegó depende de cuánto tenías en tecnología. Fijate también quién subió: los bancos y la energía. Que algo haya caído no garantiza que vaya a rebotar.`),
       msgs: () => [
-        op("Sí, comprá la caída: la tecnología siempre rebota y el que compra abajo gana. Pasemos todo lo que puedas a Microsoft y MELI.", 4, "Le prometés un rebote que no sabés y aumentás la concentración.", 3),
-        op("Una corrección de −7% por suba de tasas no es señal de compra ni de venta por sí sola. Si tu idea de largo plazo sigue, sumemos algo de tecnología, pero sin pasar del 40% del total. Así, la próxima corrección no te define el año.", 25, "Le das una regla de tamaño y separás la idea del timing.", 7),
-        op("No puedo saber si es piso. Lo único cierto es que nadie lo sabe.", 10, "Honesto, pero lo dejás sin criterio.", -2)],
+        op("Sí, comprá la caída: la tecnología siempre rebota y el que compra abajo gana. Pasemos todo lo que puedas a Microsoft y MELI antes de que el mercado se dé cuenta y los precios vuelvan.", 4, "Le prometés un rebote que no sabés y aumentás la concentración.", 3),
+        op("Una corrección de −7% por suba de tasas no es señal de compra ni de venta. Si tu idea sigue, sumemos algo de tecnología sin pasar del 40%: así la próxima corrección no te define el año.", 25, "Le das una regla de tamaño y separás la idea del timing.", 7),
+        op("No puedo saber si este es el piso de la corrección, y es cierto que nadie lo sabe. Lo prudente es esperar a que se estabilicen las tasas y recién ahí volver a mirar si tiene sentido sumar algo.", 10, "Honesto, pero lo dejás sin criterio.", -2)],
       incoh: (k, m) => k === "2" && m.secMax > 45 ? "Le dijiste que no pasaban del 40% en tecnología, pero la propuesta lo pasa." : null,
       okKey: "No convertiste una caída en una señal: fijaste cuánto aguanta tu cartera si sigue.",
       resp: ["Mmm, tiene lógica. Pongo un poco y listo.", "Ok, ¿entonces compro o no?", "Qué lástima. Yo sentía que era la oportunidad."]
@@ -143,9 +143,9 @@
       dice: () => "El petróleo sube y mi YPF también. ¿No conviene poner más en YPF ahora que anda bien?",
       nota: X => nota(G(), 2, X, "Ganó lo que ya tenía.", "YPF depende del petróleo y de Argentina a la vez. Más peso ahí es más riesgo, aunque este mes haya acompañado.", true),
       msgs: () => [
-        op("Sí, YPF va a seguir con el petróleo: pasemos más plata ahí y aprovechás la suba.", 6, "Perseguís el último ganador con una empresa sola.", 3),
-        op("El petróleo sube por un hecho puntual y puede volver a bajar. YPF depende del crudo y de Argentina; más peso ahí sube tu riesgo. Si querés energía, un ETF de energía de afuera reparte más y no depende de una sola empresa.", 25, "Das una alternativa que mantiene la idea sin concentrar.", 7),
-        op("No se puede predecir el petróleo, así que mejor no hacemos nada.", 10, "Cierto, pero no mirás cómo está armada hoy.", -2)],
+        op("Sí, YPF va a seguir al petróleo: pasemos más plata ahí y aprovechás la suba mientras dure. Ya cobraste un buen mes y el crudo no suele frenarse de golpe.", 6, "Perseguís el último ganador con una empresa sola.", 3),
+        op("El petróleo sube por un hecho puntual y puede volver a bajar. YPF depende del crudo y de Argentina: más peso ahí sube tu riesgo. Si querés energía, mejor afuera, como ExxonMobil, y con poco peso.", 25, "Das una alternativa que mantiene la idea sin concentrar.", 7),
+        op("El petróleo es imposible de predecir y los que intentan anticiparlo suelen equivocarse. Prefiero no hacer movimientos y mirar cómo evoluciona el mercado en las próximas semanas antes de tocar nada.", 10, "Cierto, pero no mirás cómo está armada hoy.", -2)],
       incoh: (k, m) => k === "2" && pct(C.dec(2, G()).w, "ypf") > 20 ? "Le dijiste que más YPF suma riesgo, pero la propuesta le sube el peso." : null,
       okKey: "No cambiaste de cartera por un hecho puntual: mantuviste el límite por empresa.",
       resp: ["Ah, claro, no lo había pensado como una apuesta al crudo. Gracias.", "Bueno, dejémoslo así.", "Pero entonces me pierdo la suba..."]
@@ -155,9 +155,9 @@
       dice: () => "El petróleo se disparó y me estoy perdiendo la fiesta. Quiero entrar fuerte en YPF y en energía.",
       nota: X => nota(T(), 2, X, "Un buen mes para la energía, no para su cartera.", "Una cartera sin energía no la sintió. Entrar después de la suba es otra cosa que haber estado antes."),
       msgs: () => [
-        op("Dale, pasemos una parte grande a YPF y ExxonMobil mientras dure la suba. El crudo puede seguir.", 5, "Entrás tarde y con mucho peso a una apuesta que depende de un evento.", 3),
-        op("Una parte puede ser una apuesta táctica razonable: no más de 10 o 15% entre ExxonMobil e YPF, sabiendo que si el crudo revierte, cae. Y mejor una petrolera global que YPF sola: no suma riesgo argentino.", 25, "Le das un tamaño y un criterio, sin decirle que no.", 7),
-        op("El petróleo ya subió 12%: la oportunidad pasó y entrar ahora es comprar caro.", 10, "Puede ser cierto, pero no sabés si seguirá subiendo.", -2)],
+        op("Dale, pasemos una parte grande a YPF y a energía de afuera mientras dure la suba: el crudo puede seguir y el que llega primero se queda con la mejor parte del movimiento, que recién empieza.", 5, "Entrás tarde y con mucho peso a una apuesta que depende de un evento.", 3),
+        op("Puede ser una apuesta táctica: no más de 10 o 15% entre ExxonMobil e YPF, sabiendo que si el crudo revierte, cae. Y mejor energía de afuera, como ExxonMobil, que YPF sola: no suma riesgo argentino.", 25, "Le das un tamaño y un criterio, sin decirle que no.", 7),
+        op("El petróleo ya subió 12% en el mes: la oportunidad pasó y entrar ahora es comprar caro. Me parece mejor quedarnos afuera y esperar una corrección antes de armar cualquier posición de energía.", 10, "Puede ser cierto, pero no sabés si seguirá subiendo.", -2)],
       incoh: (k, m, w) => k === "2" && pct(w, "ypf") + pct(w, "xom") > 20 ? "Le dijiste que no más de 10 o 15% en energía, pero la propuesta lo supera." : null,
       okKey: "Dejaste lugar para su idea sin que el petróleo decida la cartera.",
       resp: ["Ok, una parte alcanza. Veamos cómo sigue.", "Mmm... no sé, me da bronca.", "Siempre me decís que no. ¿Cuál es la gracia?"]
@@ -181,9 +181,9 @@
       dice: () => "¡Se cayó todo! Mis nietos preguntan si vendo todo. Yo pensé que diversificar protegía. ¿Qué pasó?",
       nota: X => nota(G(), 3, X, "El día en que la diversificación se prueba.", "En un mes así casi todo cae junto. Lo que cambia es cuánto: una cartera con menos acciones y más liquidez cae menos.", true),
       msgs: () => [
-        op("Quedate tranquila: esto rebota en un mes. No vendas ni toques nada, que enseguida se recupera.", 5, "Prometés un rebote que no sabés. Si sigue cayendo, perdés credibilidad.", 3),
-        op("Diversificar no evita las caídas, las hace menos fuertes: en un mes así casi todo cae junto. Tu cartera cayó menos que el mercado porque tiene cosas defensivas y liquidez. No vendas por susto; revisemos si el reparto te sigue dejando tranquila.", 25, "Explicás qué hace y qué no hace la diversificación, sin prometer nada.", 7),
-        op("Con el S&P cayendo 5,5% y un beta de 0,5, el efecto estimado en tu cartera es de alrededor de 3%.", 8, "Correcto pero frío: ella no pregunta por el número.", -3)],
+        op("Quedate tranquila: esto rebota en un mes, como siempre. No vendas ni toques nada, que enseguida se recupera y en poco tiempo vas a haber recuperado todo lo que cayó, sin hacer nada.", 5, "Prometés un rebote que no sabés. Si sigue cayendo, perdés credibilidad.", 3),
+        op("Diversificar no evita las caídas, las achica: en un mes así casi todo cae junto. Tu cartera cayó menos que el mercado. No vendas por susto; revisemos si el reparto te deja tranquila.", 25, "Explicás qué hace y qué no hace la diversificación, sin prometer nada.", 7),
+        op("Con el S&P cayendo 5,5% y un beta de 0,5, el efecto estimado en tu cartera es de alrededor de 3%. Es un movimiento dentro de lo esperable para el nivel de riesgo que tiene hoy tu cartera.", 8, "Correcto pero frío: ella no pregunta por el número.", -3)],
       incoh: (k, m) => k === "2" && m.beta > 0.6 ? "Le dijiste que tu cartera cayó menos porque es defensiva, pero la propuesta sube el riesgo." : null,
       okKey: "No vendiste por miedo ni le prometiste un rebote: le explicaste qué hace la diversificación.",
       resp: ["Ah, entonces es normal que baje algo. Me quedo más tranquila.", "Bueno, ojalá se recupere.", "No sé... sigo con miedo."]
@@ -193,9 +193,9 @@
       dice: () => "Todo en rojo. Ahora sí compro la caída, ¿no? Lo que más cayó es lo que más rebota.",
       nota: X => nota(T(), 3, X, "Cuando todo cae, la correlación sube.", "Lo que parecía distinto (tecnología, MELI, Europa) cayó junto. Que algo haya caído mucho no dice cuánto va a rebotar, ni cuándo."),
       msgs: () => [
-        op("Sí, ahora sí: pasemos todo lo que tenés líquido a lo que más cayó. Lo que más baja es lo que más rebota.", 4, "Prometés un rebote y concentrás sin saber si fue el piso.", 3),
-        op("Comprar caídas puede ser buena idea con tu horizonte, pero de a poco y sin concentrarte: una parte ahora y dejar algo por si sigue cayendo. No sabemos si fue el piso.", 25, "Das un método (de a partes) y reconocés lo que no se sabe.", 7),
-        op("Esperemos a que el mercado se aclare. No hagamos nada hasta ver qué pasa.", 10, "Prudente, pero con 25 años de horizonte una caída así es parte del camino.", -2)],
+        op("Sí, ahora sí: pasemos todo lo que tenés líquido a lo que más cayó. Lo que más baja es lo que más rebota, y con tu horizonte podés aguantar cualquier volatilidad.", 4, "Prometés un rebote y concentrás sin saber si fue el piso.", 3),
+        op("Con tu horizonte, comprar caídas puede ser buena idea, pero de a poco y sin concentrarte: una parte ahora y dejar algo por si sigue cayendo. No sabemos si este fue el piso, y no hace falta acertarlo.", 25, "Das un método (de a partes) y reconocés lo que no se sabe.", 7),
+        op("Esperemos a que el mercado se aclare un poco. No conviene decidir en medio de una caída fuerte: hagamos una pausa, veamos cómo cierra el mes y después revisamos la cartera con más información.", 10, "Prudente, pero con 25 años de horizonte una caída así es parte del camino.", -2)],
       incoh: (k, m) => k === "2" && m.max > 20 ? "Le dijiste que iban de a poco y sin concentrarte, pero la propuesta concentra en una empresa." : null,
       okKey: "Usaste la caída sin convertirla en una apuesta a un solo nombre.",
       resp: ["Ok, de a partes me parece bien. Me deja tranquilo.", "Está bien... pero siento que me quedo con ganas.", "Siempre cauteloso. Así no se gana."]

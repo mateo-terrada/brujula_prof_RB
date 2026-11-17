@@ -167,7 +167,7 @@ window.CARTERA = (function () {
   C.met = function (w, c, monto, needAbs) {
     const r = { tot: 0, beta: 0, acc: 0, arg: 0, mm: pct(w, "mm"), max: 0, maxK: null, n: 0, sec: {}, secMax: 0, secK: null, us: 0, eur: 0, em: 0, argAcc: 0, sens: 0 };
     ORDEN.forEach(k => { const p = pct(w, k), I = C.INS[k]; r.tot += p; if (!p) return;
-      r.beta += p / 100 * I.beta; r.acc += I.acc * p; r.arg += I.arg * p; if (p >= 5) r.n++;
+      r.beta += p / 100 * I.beta; r.acc += I.acc * p; r.arg += I.arg * p; if (I.geo === "arg") r.argAcc += p; if (p >= 5) r.n++;
       if (I.unico && p > r.max) { r.max = p; r.maxK = k; }
       if (I.sec) r.sec[I.sec] = (r.sec[I.sec] || 0) + p;
       if (I.geo === "us") r.us += p; if (I.geo === "eur") r.eur += p; if (I.geo === "em") r.em += p; });

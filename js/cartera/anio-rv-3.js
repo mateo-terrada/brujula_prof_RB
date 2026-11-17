@@ -38,10 +38,10 @@
       msgs: () => {
         const vendido = C.retiro(G(), 8).vendido >= 1;
         return [
-          op("No te preocupes por lo argentino: después de las elecciones vuelve todo, siempre pasa.", 5, "Prometés algo que no sabés.", 3),
-          op(vendido ? "Para pagar los 12 mil hubo que vender un poco de todo, y eso cambió tu reparto. Veamos cómo quedó y volvamos a un reparto cómodo: poco argentino y dentro de tu tope de acciones."
-            : "Los 12 mil salieron de la plata que habíamos separado, sin vender acciones en un mal momento. Veamos cómo quedó el reparto después del retiro y mantengámoslo cómodo: poco argentino y dentro de tu tope de acciones.", 25, "Conectás el retiro con el reparto y mantenés los límites.", 7),
-          op("El mercado argentino es muy volátil en épocas electorales: en general conviene esperar.", 10, "Cierto, pero ella pregunta por su cartera.", -2)];
+          op("No te preocupes por lo argentino: después de las elecciones vuelve todo, siempre pasa. Es cuestión de paciencia y de no hacer nada que arruine la recuperación que viene.", 5, "Prometés algo que no sabés.", 3),
+          op(vendido ? "Para pagar los 12 mil hubo que vender un poco de todo y eso cambió tu reparto. Veamos cómo quedó y volvamos a uno cómodo: poco argentino y dentro de tu tope."
+            : "Los 12 mil salieron de la plata separada, sin vender acciones. Veamos cómo quedó el reparto después del retiro y mantengámoslo cómodo: poco argentino y dentro de tu tope.", 25, "Conectás el retiro con el reparto y mantenés los límites.", 7),
+          op("El mercado argentino es muy volátil en épocas electorales y es difícil saber para dónde va. En general conviene esperar a que pase el evento antes de tomar cualquier decisión sobre tu cartera.", 10, "Cierto, pero ella pregunta por su cartera.", -2)];
       },
       incoh: (k, m) => k === "2" && (m.acc > 40 || m.arg > 35) ? "Le dijiste que mantendrías poco argentino y dentro del tope, pero la propuesta no lo cumple." : null,
       okKey: "Después del retiro, revisaste que la cartera siguiera dentro de sus límites.",
@@ -52,10 +52,10 @@
       dice: () => "Las encuestas mueven todo. Quiero entrar a acciones argentinas antes de las elecciones. Si sale bien, se dispara.",
       nota: X => nota(T(), 8, X, "Un evento con dos resultados posibles.", "Lo que vaya a pasar con las elecciones no se sabe. Apostar antes del resultado es apostar a una moneda al aire."),
       msgs: () => [
-        op("Las elecciones siempre dan oportunidades: apostemos fuerte a acciones argentinas antes del resultado.", 5, "Apostás fuerte a un evento binario.", 3),
-        op("Las elecciones son un evento con dos resultados posibles y nadie sabe cuál. Si querés tener algo argentino, que sea una porción que soportes perder; mantengamos las acciones argentinas acotadas, hasta unos 20 o 25%.", 25, "Das un tope y tratás el evento como un riesgo, no como una oportunidad segura.", 7),
-        op("No tengo opinión sobre las elecciones. Hagas lo que hagas, es tu decisión.", 8, "Evitás el tema en lugar de ayudarlo a decidir el tamaño.", -3)],
-      incoh: (k, m) => k === "2" && m.arg > 30 ? "Le dijiste que mantengan lo argentino acotado, pero la propuesta lo supera." : null,
+        op("Las elecciones siempre dan oportunidades: apostemos fuerte a acciones argentinas antes del resultado, porque el que entra antes es el que más gana cuando el mercado se mueve.", 5, "Apostás fuerte a un evento binario.", 3),
+        op("Las elecciones son un evento con dos resultados posibles y nadie sabe cuál. Si querés algo argentino, que sea una porción que soportes perder: mantengamos las acciones argentinas acotadas, hasta 20 o 25%.", 25, "Das un tope y tratás el evento como un riesgo, no como una oportunidad segura.", 7),
+        op("No tengo una opinión sobre el resultado de las elecciones y no creo que sea mi lugar darla. Hagas lo que hagas es tu decisión, y te acompaño en lo que decidas con la información que tenemos.", 8, "Evitás el tema en lugar de ayudarlo a decidir el tamaño.", -3)],
+      incoh: (k, m) => k === "2" && m.argAcc > 30 ? `Le dijiste que mantengan las acciones argentinas acotadas (hasta 20 o 25%), pero la propuesta tiene ${m.argAcc}% entre YPF y Galicia.` : null,
       okKey: "Trataste las elecciones como un riesgo con un tope, no como una apuesta segura.",
       resp: ["Ok, una parte y veremos. Gracias por el límite.", "Mmm... me quedo con ganas de más.", "Siempre me frenás cuando hay una oportunidad."]
     },
@@ -78,9 +78,9 @@
       dice: () => "¡Todo rebotó! ¿Vuelvo a lo que tenía antes, así recupero lo perdido?",
       nota: X => nota(G(), 9, X, "Un rebote que tienta.", "Después de varios meses malos, un mes bueno hace querer recuperar todo de golpe. Pero tu tope y tu necesidad de estabilidad no cambiaron.", true),
       msgs: () => [
-        op("Sí, volvamos a lo de antes: así recuperás todo lo que se había perdido.", 5, "Volvés a una cartera que no era para ella.", 3),
-        op("Que haya rebotado no cambia lo que te conviene: tu tope sigue siendo 40% en acciones y vos necesitás estabilidad. Si el rebote corrió algún peso, rebalanceamos: vendemos un poco de lo que subió y volvemos a tu reparto.", 25, "Rebalanceás en vez de perseguir.", 7),
-        op("No toquemos nada: todo está bien como está.", 10, "Dejás que el mercado cambie el reparto sin revisar.", -2)],
+        op("Sí, volvamos a lo de antes: así recuperás todo lo que se había perdido en estos meses y volvés a tener el reparto que tenías cuando el mercado estaba en máximos.", 5, "Volvés a una cartera que no era para ella.", 3),
+        op("Que haya rebotado no cambia lo que te conviene: tu tope sigue siendo 40% en acciones y necesitás estabilidad. Si el rebote corrió algún peso, rebalanceamos y volvemos a tu reparto.", 25, "Rebalanceás en vez de perseguir.", 7),
+        op("No toquemos nada: todo está bien como está. La cartera se recuperó sola, como esperábamos, y cualquier movimiento ahora solo agregaría costos y riesgos que no hacen falta en este momento.", 10, "Dejás que el mercado cambie el reparto sin revisar.", -2)],
       incoh: (k, m) => k === "2" && (m.acc > 40 || m.arg > 35) ? "Le dijiste que mantenían el tope, pero la propuesta lo supera." : null,
       okKey: "No volviste a la cartera heredada por el rebote: mantuviste su reparto.",
       resp: ["Claro, no se trata de recuperar sino de estar cómoda. Gracias.", "Bueno, aunque pensé que era buen momento.", "Me hubiera gustado más."]
@@ -90,9 +90,9 @@
       dice: () => "Todo sube. ¿Ahora sí vamos con todo? Ya aguantamos el susto.",
       nota: X => nota(T(), 9, X, "Un rebote fuerte después de un mal tramo.", "Es fácil sentir que 'ahora sí'. Pero el reparto correcto en un mes bueno es el mismo que en uno malo."),
       msgs: () => [
-        op("Sí, vamos con todo: pasemos toda la liquidez a lo que más subió y no perdamos el tren.", 5, "Perseguís el rebote con la cartera concentrada.", 3),
-        op("Tu horizonte justifica ser agresivo, pero el reparto correcto es el mismo después de un mes bueno que de uno malo: vamos a lo que habíamos pensado, con tope por empresa y por sector, sin pasarnos por el rebote.", 25, "Mantenés el criterio aunque el mes tiente.", 7),
-        op("Ojo que después de un rebote suele venir una corrección. Mejor esperar.", 10, "Predecís un movimiento que no sabés.", -2)],
+        op("Sí, vamos con todo: pasemos toda la liquidez a lo que más subió y no perdamos el tren. Con 25 años de horizonte es mejor estar adentro que esperar el momento perfecto.", 5, "Perseguís el rebote con la cartera concentrada.", 3),
+        op("Tu horizonte justifica ser agresivo, pero el reparto correcto es el mismo después de un mes bueno que de uno malo: vamos a lo pensado, con tope por empresa.", 25, "Mantenés el criterio aunque el mes tiente.", 7),
+        op("Ojo que después de un rebote fuerte suele venir una corrección. Mejor esperar a ver si se confirma la tendencia antes de poner más plata: así evitamos comprar justo en el techo del movimiento.", 10, "Predecís un movimiento que no sabés.", -2)],
       incoh: (k, m) => k === "2" && (m.max > 15 || m.secMax > 45) ? "Le dijiste que mantendrían topes, pero la propuesta los supera." : null,
       okKey: "No cambiaste el criterio por un buen mes.",
       resp: ["Ok, mantenemos el plan. Gracias.", "Me quedo con ganas de más.", "Qué aburrido el mercado cuando sube."]
@@ -120,9 +120,9 @@
       dice: X => X.v === "A" ? "Las elecciones salieron y el mercado reaccionó bien. ¿Cómo me fue? ¿Debería tener más de lo argentino?" : "Las elecciones salieron y el mercado reaccionó mal. ¿Cómo me afecta? ¿Vendo lo argentino?",
       nota: X => nota(G(), 10, X, "Un evento que movió a Argentina.", "Lo que haya pasado con la cartera depende de cuánto tenías en acciones argentinas.", true),
       msgs: X => [
-        op(X.v === "A" ? "Qué bien: ahora sí conviene tener más argentino, que va a seguir subiendo." : "Vendamos todo lo argentino ya mismo, que esto se pone peor.", 5, X.v === "A" ? "Perseguís la suba." : "Vendés por pánico después de la caída.", 3),
+        op(X.v === "A" ? "Qué bien: ahora sí conviene tener más argentino, que después de esta suba va a seguir subiendo. Aprovechemos que el mercado cambió de humor antes de que se vuelva caro." : "Vendamos todo lo argentino ya mismo, que esto se pone peor. Después de esta caída conviene salir de todo lo que depende de Argentina y esperar a que se aclare el panorama.", 5, X.v === "A" ? "Perseguís la suba." : "Vendés por pánico después de la caída.", 3),
         op("Ninguna elección debería definir tu cartera. Tu reparto ya contempla que Argentina pueda subir o bajar: lo importante es no tener más de lo que soportás perder. Revisemos que siga así.", 25, "Convertís el evento en una revisión del reparto.", 7),
-        op("Los eventos electorales generan volatilidad. Hay que ser pacientes.", 10, "Cierto, pero no ayudás a decidir.", -2)],
+        op("Los eventos electorales generan mucha volatilidad y reaccionar rápido casi nunca sale bien. Hay que ser pacientes y dejar pasar el ruido antes de tomar cualquier decisión sobre lo argentino.", 10, "Cierto, pero no ayudás a decidir.", -2)],
       incoh: (k, m) => k === "2" && (m.acc > 40 || m.arg > 35) ? "Le dijiste que mantendrías su reparto en límites, pero la propuesta los supera." : null,
       okKey: "No dejaste que una elección definiera la cartera: revisaste que siguiera dentro de sus límites.",
       resp: ["Ya entiendo: no es para apostar a las elecciones. Gracias.", "Bueno, aunque me quedé con dudas.", "No sé qué hago."]
@@ -132,10 +132,10 @@
       dice: X => X.v === "A" ? "Las acciones argentinas volaron con las elecciones. ¿Pongo más? Esto recién empieza." : "Las acciones argentinas se hundieron con el resultado. ¿Vendo todo o compro más? No sé qué hacer.",
       nota: X => nota(T(), 10, X, "Lo que hizo el mercado depende de lo que tenías.", "Con un evento binario, el resultado no dice si la decisión era buena: dice cuánta suerte hubo."),
       msgs: X => [
-        op(X.v === "A" ? "Sí, pongamos mucho más: el mercado ya mostró para dónde va." : "Compremos fuerte: lo que más cayó es lo que más rebota.", 4, X.v === "A" ? "Subís el peso después de la suba." : "Prometés un rebote.", 3),
+        op(X.v === "A" ? "Sí, pongamos mucho más: el mercado ya mostró para dónde va, y no tiene sentido quedarse afuera ahora que la tendencia está definida y el riesgo país bajó." : "Compremos fuerte: lo que más cayó es lo que más rebota, y esta es la oportunidad de entrar barato antes de que el resto del mercado se dé cuenta.", 4, X.v === "A" ? "Subís el peso después de la suba." : "Prometés un rebote.", 3),
         op("El resultado de una elección no dice si tu decisión era buena: dice cuánta suerte hubo. Mantengamos las acciones argentinas dentro del tope que fijamos, gane o pierda este mes.", 25, "Separás el resultado de la calidad de la decisión.", 7),
-        op("Es una buena oportunidad o una mala, depende de cómo lo mires. No te puedo decir.", 8, "Evitás dar un criterio.", -3)],
-      incoh: (k, m) => k === "2" && m.arg > 30 ? "Le dijiste que mantendrían el tope, pero la propuesta lo supera." : null,
+        op("Es una buena oportunidad o una mala, depende de cómo lo mires: hay argumentos para los dos lados. No te puedo decir qué conviene, es una decisión que depende de cuánto riesgo quieras tomar.", 8, "Evitás dar un criterio.", -3)],
+      incoh: (k, m) => k === "2" && m.argAcc > 30 ? `Le dijiste que mantendrían las acciones argentinas dentro del tope, pero la propuesta tiene ${m.argAcc}% entre YPF y Galicia.` : null,
       okKey: "Separaste el resultado de la elección de la calidad de la decisión.",
       resp: ["Tiene sentido: mantengo el tope. Gracias.", "Mmm, me quedo con ganas.", "No me convence, pero ok."]
     },
@@ -158,9 +158,9 @@
       dice: () => "Cerró el año. Mi amigo ganó más que yo en Nasdaq. ¿Mi año fue bueno?",
       nota: X => `<div class="callout"><b>El balance del año.</b><br>Su cartera rindió ${sg(C.acum(G(), 11))}% en dólares, con una caída máxima de ${sg(C.caidaMax(G(), 11))}%. La referencia simple (40% S&P 500, 60% liquidez) rindió ${sg(C.acumRef(G(), 11))}%, con una caída de ${sg(C.caidaMaxRef(G(), 11))}%.</div>`,
       msgs: X => [
-        op("El año que viene arriesgamos más para que le ganes a tu amigo. Con todo lo que aprendimos, se puede.", 4, "Le prometés más retorno con más riesgo, justo a la persona que quería dormir tranquila.", 3),
-        op(`Tu cartera rindió ${sg(C.acum(G(), 11))}% en dólares y su peor caída fue ${sg(C.caidaMax(G(), 11))}%. La referencia simple rindió ${sg(C.acumRef(G(), 11))}%, con una caída de ${sg(C.caidaMaxRef(G(), 11))}%. Tu objetivo es que se mueva poco y cuidar lo que juntaste; compararte con alguien que juega a un solo índice no corresponde.`, 25, "Das el número con la caída y lo comparás con lo que corresponde a su perfil.", 7),
-        op(`Rindió ${sg(C.acum(G(), 11))}% en dólares: es un número razonable. El detalle está en el resumen que manda el broker.`, 10, "Un número sin contexto: no sabe si es bueno ni para qué sirve.", -2)],
+        op("El año que viene arriesgamos más para que le ganes a tu amigo. Con todo lo que aprendimos se puede, y un poco más de acciones le daría a tu cartera el impulso que le faltó este año.", 4, "Le prometés más retorno con más riesgo, justo a la persona que quería dormir tranquila.", 3),
+        op(`Tu cartera rindió ${sg(C.acum(G(), 11))}% en dólares y su peor caída fue ${sg(C.caidaMax(G(), 11))}%. La referencia simple rindió ${sg(C.acumRef(G(), 11))}%, con una caída de ${sg(C.caidaMaxRef(G(), 11))}%. Tu objetivo es cuidar lo que juntaste, no ganarle a un índice.`, 25, "Das el número con la caída y lo comparás con lo que corresponde a su perfil.", 7),
+        op(`Rindió ${sg(C.acum(G(), 11))}% en dólares, que es un número razonable para el año. El detalle de las posiciones y los movimientos lo tenés en el resumen que te manda el broker, donde se ve cada operación.`, 10, "Un número sin contexto: no sabe si es bueno ni para qué sirve.", -2)],
       incoh: (k, m) => k === "1" && m.acc <= 40 ? "Le dijiste que iban a arriesgar más, pero la propuesta no lo hace." : null,
       okKey: "Cerraste el año explicando para qué sirve su cartera, no solo cuánto rindió.",
       resp: ["Gracias, querida. Fue un año con sustos, pero dormí bien. Seguimos.", "Ah, bueno. ¿Y eso es mucho o poco?", "Bueno, sí, quiero ganar un poco más."]
@@ -170,9 +170,9 @@
       dice: () => "Cierre de año. ¿Le gané al S&P? Porque si no le gano, compro SPY y me ahorro el trabajo.",
       nota: X => `<div class="callout"><b>El balance del año.</b><br>Su cartera rindió ${sg(C.acum(T(), 11))}% en dólares, con una caída máxima de ${sg(C.caidaMax(T(), 11))}%. El S&P 500 rindió ${sg(C.acumRef(T(), 11))}%, con una caída de ${sg(C.caidaMaxRef(T(), 11))}%. La heredada, sin tocar: ${sg(C.acumHer(T(), 11))}%.</div>`,
       msgs: X => [
-        op("Tu amigo tuvo un buen año, pero el que viene le ganamos seguro: pasamos todo a lo que mejor anda y listo.", 4, "Prometés ganar el año que viene sin saber nada.", 3),
-        op(`Tu cartera rindió ${sg(C.acum(T(), 11))}% en dólares, con una caída máxima de ${sg(C.caidaMax(T(), 11))}%. El S&P rindió ${sg(C.acumRef(T(), 11))}%, con una caída de ${sg(C.caidaMaxRef(T(), 11))}%. La pregunta es si valió la pena el riesgo extra o la complejidad: miremos qué sumó y qué restó cada decisión.`, 25, "Comparás retorno y caída contra la referencia y abrís la discusión.", 7),
-        op("Compararse con el S&P no sirve: son cosas distintas y cada cartera es un mundo.", 8, "Descartás una pregunta razonable sin explicar.", -3)],
+        op("Tu amigo tuvo un buen año, pero el que viene le ganamos seguro: pasamos todo a lo que mejor anda y listo. Con lo aprendido y tu horizonte, es cuestión de animarse a concentrar un poco más.", 4, "Prometés ganar el año que viene sin saber nada.", 3),
+        op(`Tu cartera rindió ${sg(C.acum(T(), 11))}% en dólares, con una caída máxima de ${sg(C.caidaMax(T(), 11))}%. El S&P rindió ${sg(C.acumRef(T(), 11))}%, con una caída de ${sg(C.caidaMaxRef(T(), 11))}%. La pregunta es si valió el riesgo extra: miremos qué sumó y qué restó cada decisión.`, 25, "Comparás retorno y caída contra la referencia y abrís la discusión.", 7),
+        op("Compararse con el S&P no sirve: son cosas distintas y cada cartera es un mundo. Tu amigo tiene su estilo y vos el tuyo, y lo que importa es que te sientas cómodo con lo que armaste este año.", 8, "Descartás una pregunta razonable sin explicar.", -3)],
       incoh: (k, m) => k === "1" && m.max > 20 ? "Le dijiste que iban a ganarle al mercado pero la propuesta tiene una apuesta concentrada." : null,
       okKey: "Cerraste el año con los números sobre la mesa: retorno y caída contra la referencia.",
       resp: ["Bien. Me gusta que lo plantees así. Lo pienso para el año que viene.", "Mmm. No me contestaste.", "¡Así me gusta!"]

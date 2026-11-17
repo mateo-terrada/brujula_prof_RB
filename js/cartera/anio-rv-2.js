@@ -32,9 +32,9 @@
       dice: () => "Wall Street se recuperó pero mis acciones argentinas siguen bajando. ¿Las mantengo? ¿O vendo y entro a lo de afuera?",
       nota: X => nota(G(), 4, X, "Dos mercados, dos motores.", `Lo de afuera dependía del mercado global, que rebotó. Lo argentino depende además del riesgo país, que siguió subiendo (${sg(X.F.rp, 0)} pb).`, true),
       msgs: () => [
-        op("Esperá: lo argentino siempre rebota fuerte y después compensa lo perdido. Mantené todo, que vuelve.", 5, "Prometés un rebote que no está garantizado.", 3),
-        op("Lo de afuera se recuperó porque depende del mercado global; lo argentino depende además de Argentina, y ahí no hay rebote por ahora. No vendemos por un mes malo, pero sí propongo no sumar más a lo argentino: ya pesa mucho para tu perfil.", 25, "Distinguís los dos motores y fijás un criterio, no una predicción.", 7),
-        op("Cada mercado tiene su ritmo y no conviene compararlos. Veamos más adelante.", 10, "Cierto, pero la dejás con la duda.", -2)],
+        op("Esperá: lo argentino siempre rebota fuerte y después compensa lo perdido. Mantené todo como está, que cuando el riesgo país se acomode vuelve a subir y recuperás todo de una vez.", 5, "Prometés un rebote que no está garantizado.", 3),
+        op("Lo de afuera se recuperó porque depende del mercado global; lo argentino depende además de Argentina, y ahí no hay rebote por ahora. No vendemos por un mes malo, pero no sumaría más: ya pesa mucho en tu perfil.", 25, "Distinguís los dos motores y fijás un criterio, no una predicción.", 7),
+        op("Cada mercado tiene su ritmo y no conviene compararlos entre sí. Es muy pronto para sacar conclusiones, así que veamos cómo se comporta lo argentino en las próximas semanas antes de definir qué hacer.", 10, "Cierto, pero la dejás con la duda.", -2)],
       incoh: (k, m) => k === "2" && m.arg > 40 ? "Le dijiste que no sumabas más a lo argentino, pero la propuesta sigue muy argentina." : null,
       okKey: "Separaste el rebote global del problema argentino y no apostaste a que una caída se revierta sola.",
       resp: ["Ya entiendo: es otro mercado con otras reglas. Me quedo más tranquila.", "Bueno. Ojalá vuelvan.", "Entonces no sé si conviene tener esas acciones."]
@@ -44,10 +44,10 @@
       dice: () => "Argentina está regalada: YPF y Galicia se cayeron un montón. ¿Compramos? Cuando se acomode, se dispara.",
       nota: X => nota(T(), 4, X, "Barato no es lo mismo que va a rebotar.", `El riesgo país siguió subiendo (${sg(X.F.rp, 0)} pb): las acciones argentinas bajan aunque el mundo suba.`),
       msgs: () => [
-        op("Sí, barato es barato: pasemos fuerte a acciones argentinas. Cuando se acomode, es lo que más sube.", 5, "Confundís precio bajo con rebote seguro, y apostás fuerte a un solo país.", 3),
-        op("Puede haber valor, pero 'barato' no es lo mismo que 'va a rebotar': el riesgo país sigue subiendo. Si querés exponerte, hagámoslo acotado, hasta unos 15 o 20% entre acciones argentinas, sabiendo que podría seguir cayendo.", 25, "Ponés un límite que permite la idea y protege la cartera.", 7),
-        op("Es una trampa: no tocaría nada argentino ahora.", 10, "Descartás sin explicar; hay posiciones razonables.", -2)],
-      incoh: (k, m) => k === "2" && m.arg > 25 ? "Le dijiste que hasta 15 o 20%, pero la propuesta lo supera." : null,
+        op("Sí, barato es barato: pasemos fuerte a acciones argentinas. Cuando el riesgo país se acomode es lo que más sube, y el que compra ahora se queda con todo el rebote.", 5, "Confundís precio bajo con rebote seguro, y apostás fuerte a un solo país.", 3),
+        op("Puede haber valor, pero 'barato' no es 'va a rebotar': el riesgo país sigue subiendo. Si querés exponerte, que sea acotado, hasta 15 o 20% entre acciones argentinas.", 25, "Ponés un límite que permite la idea y protege la cartera.", 7),
+        op("Es una trampa: las acciones argentinas parecen baratas, pero con el riesgo país subiendo pueden seguir cayendo por meses. No tocaría nada argentino ahora y esperaría una señal clara de que cambió la tendencia.", 10, "Descartás sin explicar; hay posiciones razonables.", -2)],
+      incoh: (k, m) => k === "2" && m.argAcc > 25 ? `Le dijiste que hasta 15 o 20% en acciones argentinas, pero la propuesta tiene ${m.argAcc}% entre YPF y Galicia.` : null,
       okKey: "Dejaste entrar la idea con un tope, sin convertir 'barato' en una promesa.",
       resp: ["Está bien, de a poco. Me convence.", "Mmm, sigo pensando que es oportunidad.", "Qué decepción: siempre cauteloso."]
     },
@@ -71,9 +71,9 @@
       dice: () => "Mi nieta entra a la universidad en el exterior y en agosto necesito 12 mil dólares. Hoy tengo mucho en acciones. ¿Vendo algo ahora o esperamos a agosto?",
       nota: X => nota(G(), 5, X, "Mes tranquilo, pero con un compromiso a la vista.", "Lo que se necesita en pocos meses no puede depender de cómo esté el mercado ese día. Es el mejor momento para separarlo.", true),
       msgs: () => [
-        op("No te preocupes, en agosto vemos. Seguro la plata va a estar, el mercado suele estar bien.", 5, "Dejás para después algo que ya sabés que va a pasar.", 3),
-        op("Separemos ya los 12 mil en liquidez en dólares, así no dependés de cómo esté el mercado en agosto. El resto sigue como está.", 25, "Conectás el plazo del gasto con el tipo de instrumento.", 7),
-        op("Qué lindo para tu nieta. Más adelante vemos de dónde sale la plata.", 10, "Cálido, pero sin plan.", -2)],
+        op("No te preocupes, en agosto vemos. Seguro la plata va a estar, el mercado suele estar bien en esa época del año y si hace falta vendemos algo ese mismo mes sin problema.", 5, "Dejás para después algo que ya sabés que va a pasar.", 3),
+        op("Separemos ya los 12 mil en liquidez en dólares, así no dependés de cómo esté el mercado en agosto. Lo demás sigue como está y no hace falta venderlo ahora, ni cambiar nada de lo que tenés.", 25, "Conectás el plazo del gasto con el tipo de instrumento.", 7),
+        op("Qué lindo para tu nieta, me alegra que puedas ayudarla con los estudios. Más adelante, cuando se acerque la fecha, vemos de dónde conviene sacar la plata y cómo hacerlo con tranquilidad.", 10, "Cálido, pero sin plan.", -2)],
       incoh: (k, m) => k === "2" && m.mm < m.need - 0.01 ? "Le dijiste que separabas los 12 mil, pero la propuesta no los separa." : null,
       okKey: "Separaste el gasto de agosto del resto: esa plata no depende de lo que haga el mercado.",
       resp: ["Qué alivio tenerlo separado. Gracias.", "Bueno, confío en que se resuelva.", "Mmm, me quedo con la duda de si va a alcanzar."]
@@ -83,9 +83,9 @@
       dice: () => "Mes aburrido. ¿Hacemos algo o la dejamos como está? Ya se me pasó la ansiedad de marzo.",
       nota: X => nota(T(), 5, X, "Un mes quieto es un buen momento para revisar.", `Con la cartera como la dejaste, tecnología pesa ${mt(T(), 5).secMax || 0}% y la mayor empresa, ${mt(T(), 5).max}%. Mirá si sigue como la pensaste o si el mercado la corrió.`),
       msgs: () => [
-        op("Aprovechemos para pasar todo a lo que más subió este año: esas son las ganadoras.", 5, "Perseguís el rendimiento pasado.", 3),
-        op("Un mes tranquilo es buen momento para revisar si la cartera sigue como la pensaste. Mirando pesos y sectores, ajustemos lo que se haya corrido y dejemos el resto.", 25, "Hablás de revisar con criterio, no de operar por operar.", 7),
-        op("Mejor no hacer nada: el que opera mucho pierde.", 12, "Prudente, pero sin revisar si la cartera sigue bien armada.", -1)],
+        op("Aprovechemos para pasar todo a lo que más subió este año: esas son las ganadoras y el mercado premia la tendencia. Con un mes tranquilo es el momento ideal para concentrarse.", 5, "Perseguís el rendimiento pasado.", 3),
+        op("Un mes tranquilo es buen momento para revisar si la cartera sigue como la pensaste. Mirando pesos y sectores, ajustemos lo que se haya corrido y dejemos el resto como está, sin sumar nada nuevo.", 25, "Hablás de revisar con criterio, no de operar por operar.", 7),
+        op("Mejor no hacer nada: el que opera mucho pierde, y cada movimiento tiene costos de comisiones e impuestos. Si la cartera funciona, lo más rentable suele ser dejarla quieta y esperar con paciencia.", 12, "Prudente, pero sin revisar si la cartera sigue bien armada.", -1)],
       okKey: "Aprovechaste la calma para revisar el reparto, sin operar por operar.",
       resp: ["Sí, tiene sentido. Mirémoslo con calma.", "Ok, aunque me dio ganas de moverme.", "Bueno... aburrido pero tranquilo."]
     },
@@ -109,9 +109,9 @@
       dice: () => "Mi nieto dice que Europa subió mucho. ¿Debería tener algo de eso? ¿O me quedo con lo que tengo?",
       nota: X => nota(G(), 6, X, "Un mes en que lo de afuera ayudó.", "Quien tenía algo fuera de EE.UU. lo notó. Quien no, no se enteró.", true),
       msgs: () => [
-        op("Sí, cambiemos buena parte de lo que tenés a Europa y emergentes: la rotación recién empieza.", 5, "Pasás todo a lo que acaba de subir.", 3),
-        op("Una parte pequeña en un ETF de Europa te suma diversificación: no es para ganar más, sino para no depender de un solo país. Eso sí, no cambia tu tope de 40% en acciones.", 25, "Explicás el motivo de diversificar, sin prometer rendimiento.", 7),
-        op("No hace falta: lo que tenés está bien y no conviene cambiar por lo que dice la familia.", 8, "Descartás sin escuchar.", -3)],
+        op("Sí, cambiemos buena parte de lo que tenés a Europa y emergentes: la rotación recién empieza y el que llega primero se queda con la mejor parte de la suba que todavía falta.", 5, "Pasás todo a lo que acaba de subir.", 3),
+        op("Una parte pequeña en un ETF de Europa suma diversificación: no es para ganar más, sino para no depender de un solo país. Eso sí, no cambia tu tope de 40% en acciones, ni el resto del reparto.", 25, "Explicás el motivo de diversificar, sin prometer rendimiento.", 7),
+        op("No hace falta cambiar nada: lo que tenés está bien y no conviene mover la cartera por lo que se comenta en la familia. Una cartera sólida no se rearma cada vez que cambia la moda del mercado.", 8, "Descartás sin escuchar.", -3)],
       incoh: (k, m) => k === "2" && m.acc > 40 ? "Le dijiste que no cambia el tope de 40%, pero la propuesta lo supera." : null,
       okKey: "Sumaste otra geografía para diversificar, no para perseguir una suba.",
       resp: ["Ah, claro, es para no depender de un solo lugar. Me gusta.", "Bueno, aunque no sé si es lo mío.", "No me siento escuchada."]
@@ -121,9 +121,9 @@
       dice: () => "Europa y emergentes subieron mucho más que EE.UU. ¿Cambio todo lo de EE.UU. a Europa? Parece que ahí está la plata.",
       nota: X => nota(T(), 6, X, "El que tenía algo afuera lo sintió a favor.", `Si tu cartera estaba toda en EE.UU. (${mt(T(), 6).us}% hoy), este mes te quedaste afuera.`),
       msgs: () => [
-        op("Sí, cambiemos todo a Europa y emergentes: la rotación recién empieza y el que llega primero gana.", 5, "Perseguís el último ganador.", 3),
-        op("Justamente por esto conviene tener de todo: este mes ayudó lo de afuera de EE.UU. Si todavía no lo tenés, sumemos una porción; pasar todo a lo que subió sería perseguir el último ganador.", 25, "Convertís el mes en una lección de diversificación.", 7),
-        op("Los ciclos geográficos son impredecibles. Mejor no intentar anticiparlos.", 12, "Cierto, pero no ofrecés una acción concreta.", -2)],
+        op("Sí, cambiemos todo a Europa y emergentes: la rotación recién empieza y el que llega primero gana. Después de lo que subieron, ahí está el dinero este año, y quedarse afuera es perder la ola.", 5, "Perseguís el último ganador.", 3),
+        op("Justamente por esto conviene tener de todo: este mes ayudó lo de afuera de EE.UU. Si todavía no lo tenés, sumemos una porción; pasar todo a lo que subió sería perseguir al último ganador.", 25, "Convertís el mes en una lección de diversificación.", 7),
+        op("Los ciclos geográficos son impredecibles, y nadie sabe qué región va a liderar el año que viene. Mejor no intentar anticiparlos: dejemos la cartera como está y sigamos con el plan que armamos.", 12, "Cierto, pero no ofrecés una acción concreta.", -2)],
       incoh: (k, m) => k === "2" && m.us > 80 ? "Le dijiste que sumaban una porción de afuera, pero la propuesta sigue casi toda en EE.UU." : null,
       okKey: "Sumaste otras geografías sin dejar que el mes pasado defina la cartera.",
       resp: ["Tiene lógica: no todo en un lugar. Hacelo.", "Me quedo con ganas de más Europa.", "Siempre llego tarde a lo que sube."]
@@ -149,9 +149,9 @@
       dice: () => "Vi lo de MercadoLibre. ¿Eso me afecta? ¿Y eso es lo que le pasó a mi anterior asesor, que ponía todo en una o dos cosas?",
       nota: X => nota(G(), 7, X, "Una empresa, no un sector.", `MELI cayó ${A(X.ret.meli, 0)}% y la tecnología subió. Si tenías mucho en una sola empresa, eso pesa más que cualquier sector.`, true),
       msgs: () => [
-        op("Es un mal trimestre. Mantené todo: una empresa buena siempre vuelve y comprar abajo es lo mejor que podés hacer.", 5, "Prometés que 'siempre vuelve'. No todas las empresas lo hacen.", 3),
-        op("Una sola empresa puede fallar aunque el sector suba, por eso conviene limitar cuánto pesa cada una: para vos, no más de 10%. Revisemos qué tenés en una sola empresa y ajustémoslo.", 25, "Convertís el titular en una regla de tamaño.", 7),
-        op("Eso es normal en bolsa: unas suben, otras bajan. No hay mucho para hacer.", 8, "Descartás un tema que te sirve para ordenar la cartera.", -3)],
+        op("Es un mal trimestre y nada más. Mantené todo: una empresa buena siempre vuelve y comprar abajo es lo mejor que podés hacer. Si tenés liquidez, sumá un poco más en lo que cayó.", 5, "Prometés que 'siempre vuelve'. No todas las empresas lo hacen.", 3),
+        op("Una sola empresa puede fallar aunque el sector suba, por eso conviene limitar cuánto pesa cada una: para vos, no más de 10%. Revisemos qué tenés en una sola empresa y ajustémoslo si hace falta.", 25, "Convertís el titular en una regla de tamaño.", 7),
+        op("Eso es normal en bolsa: unas empresas suben y otras bajan, y no tiene sentido buscarle una explicación a cada movimiento. Con una visión de largo plazo, lo mejor es dejar que el tiempo haga su trabajo.", 8, "Descartás un tema que te sirve para ordenar la cartera.", -3)],
       incoh: (k, m) => k === "2" && m.max > 10 ? "Le dijiste que no más de 10% por empresa, pero la propuesta lo supera." : null,
       okKey: "Usaste el golpe a una empresa para fijar un tope por empresa.",
       resp: ["Claro: nunca todo en una. Me quedo más tranquila.", "Ah, bueno. ¿Y esto se arregla?", "No entiendo qué hago ahora."]
@@ -162,9 +162,9 @@
         : "MELI cayó con los resultados, aunque el Nasdaq subió. Menos mal que no tengo tanto. ¿Compramos más a este precio?",
       nota: X => nota(T(), 7, X, "Una empresa contra el sector.", `El Nasdaq subió ${A(X.ret.nas)}% y MELI cayó ${A(X.ret.meli, 0)}%. Quien tenía mucho en MELI perdió aunque el sector estuviera bien.`),
       msgs: () => [
-        op("Es un mal trimestre: comprá más a este precio. Una empresa buena siempre vuelve.", 4, "Prometés una recuperación y subís el peso de una sola empresa.", 3),
+        op("Es un mal trimestre: comprá más a este precio. Una empresa buena siempre vuelve y es una oportunidad de bajar tu costo promedio en MELI mientras el resto del mercado sube.", 4, "Prometés una recuperación y subís el peso de una sola empresa.", 3),
         op("Una sola empresa puede fallar aunque su sector suba: por eso conviene limitar cada una a 10 o 15%. Revisemos si los resultados cambian tu tesis sobre MELI, no el precio, y dejemos su peso acotado.", 25, "Separás el precio de la tesis y fijás un tope.", 7),
-        op("Es la volatilidad normal de cualquier acción individual. No hay que sacar conclusiones de un solo trimestre.", 10, "Cierto, pero no revisás el peso.", -2)],
+        op("Es la volatilidad normal de cualquier acción individual y no hay que sacar conclusiones de un solo trimestre. Con tu horizonte, un mal resultado puntual no cambia la historia de la empresa.", 10, "Cierto, pero no revisás el peso.", -2)],
       incoh: (k, m) => k === "2" && m.max > 15 ? "Le dijiste que no más de 10 o 15% por empresa, pero la propuesta lo supera." : null,
       okKey: "Dejaste una sola empresa en un peso que la cartera puede absorber.",
       resp: ["Ok, tiene sentido. Me quedo con 10 o 15% máximo.", "Mmm, me quedo con la duda de si hay que comprar.", "No me convence, pero hacelo."]
