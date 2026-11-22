@@ -251,7 +251,7 @@ dialog::backdrop{background:rgba(10,12,16,.45)}
         <textarea id="wEnvy" maxlength="300"></textarea>
       </div>
       <div class="field">
-        <span class="lab">Noches que me fui después de las 20 h</span>
+        <span class="lab">Noches que cerré a las 19 h o más tarde</span>
         <div class="seg" id="wLate"></div>
       </div>
       <div class="field">
@@ -510,7 +510,7 @@ function renderMapa(){
   // semanas
   const wsSorted=[...ws].sort((a,b)=>a.wk.localeCompare(b.wk));
   const weekCells=wsSorted.map(w=>`<span class="wk" title="${w.wk}: ${w.sun}" style="background:${sunCol(w.sun)};border-color:${team(w.team).col}${w.sun==='peso'?';box-shadow:inset 0 0 0 2px var(--neg)':''}"></span>`).join('');
-  const lateBy=TEAMS.map(t=>{const L=ws.filter(w=>w.team===t.id&&w.late!=null);return L.length?`${t.name}: ${(L.reduce((a,w)=>a+ +w.late,0)/L.length).toFixed(1)} noches tarde por semana`:null}).filter(Boolean).join(' · ');
+  const lateBy=TEAMS.map(t=>{const L=ws.filter(w=>w.team===t.id&&w.late!=null);return L.length?`${t.name}: ${(L.reduce((a,w)=>a+ +w.late,0)/L.length).toFixed(1)} noches de 19 h o más por semana`:null}).filter(Boolean).join(' · ');
   // evaluaciones
   const lastRv=TEAMS.flatMap(t=>[null,...t.subs.map(x=>x[0])].map(sb=>rv.filter(r=>r.team===t.id&&(r.sub||null)===sb).sort((a,b)=>b.ts-a.ts)[0])).filter(Boolean);
   const rvName=r=>team(r.team).name+(r.sub?' · '+subName(r.team,r.sub):'');const hol=new Set(lastRv.filter((r,i)=>lastRv.findIndex(z=>z.team===r.team)!==i).map(r=>r.id));const dotS=r=>hol.has(r.id)?`background:var(--bg);border:3px solid ${team(r.team).col}`:`background:${team(r.team).col}`;
